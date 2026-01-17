@@ -1,0 +1,16 @@
+model Payment {
+    id            String     @id @default(uuid())
+    orderId       String      @unique
+    amount        Float
+    status        PaymentStatus @default(UNPAID)
+    transactionId String   @unique
+    paymentIntent String? // Stripe payment intent ID
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+    stripeEventId String?  @unique // For webhook idempotency
+
+    order         Order    @relation(fields: [orderId], references: [id])
+
+    @@index([status])
+    @@map("payments")
+}

@@ -13,6 +13,7 @@ const env = cleanEnv(process.env, {
   JWT_ACCESS_EXPIRES: str(),
   JWT_REFRESH_SECRET: str(),
   JWT_REFRESH_EXPIRES: str(),
+  BCRYPT_SALT_ROUNDS: num({ default: 10 }),
 });
 
 const ENV = {
@@ -26,6 +27,7 @@ const ENV = {
     JWT_REFRESH_SECRET: env.JWT_REFRESH_SECRET,
     JWT_REFRESH_EXPIRES: env.JWT_REFRESH_EXPIRES,
   },
+  BCRYPT_SALT_ROUND: env.BCRYPT_SALT_ROUNDS,
 };
 
 export default ENV;

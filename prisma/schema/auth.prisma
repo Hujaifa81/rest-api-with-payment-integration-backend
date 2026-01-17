@@ -1,0 +1,11 @@
+model AuthProvider {
+    id         String           @id @default(uuid())
+    provider   AuthProviderType
+    providerId String
+    userId     String
+    user       User             @relation(fields: [userId], references: [id])
+
+    @@unique([provider, providerId])
+    @@index([userId])
+    @@map("auth_providers")
+}

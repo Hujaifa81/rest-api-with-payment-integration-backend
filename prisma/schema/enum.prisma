@@ -1,3 +1,13 @@
 enum Role {
     USER
 }
+enum AuthProviderType {
+    GOOGLE
+    CREDENTIALS
+}
+
+enum PaymentStatus {
+    UNPAID
+    PAID
+}
+
