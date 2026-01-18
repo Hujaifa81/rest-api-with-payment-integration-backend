@@ -1,5 +1,5 @@
 import { ApiError } from "../../app/errors";
-import ENV from "../../config";
+import ENV from "../../config/env";
 import { IJWTPayload } from "../../interface/declare";
 import { generateToken, verifyToken } from "../helper";
 import httpStatus from "http-status";

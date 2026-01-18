@@ -1,6 +1,6 @@
 import { createServer, Server } from "http";
 import { prisma } from "./lib/prisma";
-import ENV from "./config";
+import ENV from "./config/env";
 import app from "./app";
 
 async function connectToDB() {

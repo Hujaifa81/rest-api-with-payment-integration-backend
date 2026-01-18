@@ -3,7 +3,7 @@ import { prisma } from "../../../lib/prisma";
 import { ApiError } from "../../errors";
 import httpStatus from "http-status-codes";
 import bcryptjs from "bcryptjs";
-import ENV from "../../../config";
+import ENV from "../../../config/env";
 
 const createUser = async (payload: Partial<User>) => {
     const { email, password, ...rest } = payload;
@@ -41,30 +41,36 @@ const createUser = async (payload: Partial<User>) => {
         });
         const userWithProviders = await tnx.user.findUnique({
             where: { id: user.id },
-            include: { authProviders: {
-                select: {
-                    provider: true,
-                    providerId: true,
-            } } },
+            include: {
+                authProviders: {
+                    select: {
+                        provider: true,
+                        providerId: true,
+                    }
+                }
+            },
         });
         return userWithProviders;
     });
 
-    
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _pw, ...safeUser } = result || {};
 
     return safeUser;
 };
 
-const getMe=async(userId:string)=>{
-    const result=await prisma.user.findUnique({
-        where:{id:userId},
-        include:{ authProviders: {
-            select: {
-                provider: true,
-                providerId: true,
-        } } },
+const getMe = async (userId: string) => {
+    const result = await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+            authProviders: {
+                select: {
+                    provider: true,
+                    providerId: true,
+                }
+            }
+        },
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

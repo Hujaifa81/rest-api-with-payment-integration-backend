@@ -1,5 +1,5 @@
 import { CorsOptions } from "cors";
-import ENV from "../../config";
+import ENV from "../../config/env";
 
 const whitelist = [...ENV.WHITE_LIST_ORIGIN.split(",")];
 

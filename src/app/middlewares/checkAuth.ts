@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status-codes";
 import { ApiError } from "../errors";
 import { verifyToken } from "../../shared";
-import ENV from "../../config";
+import ENV from "../../config/env";
 import { IJWTPayload } from "../../interface/declare";
 import { prisma } from "../../lib/prisma";
 
