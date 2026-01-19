@@ -1,10 +1,14 @@
 model Payment {
     id            String     @id @default(uuid())
     orderId       String      @unique
-    amount        Float
+    amountCents   Int
     status        PaymentStatus @default(UNPAID)
     transactionId String   @unique
-    paymentIntent String? // Stripe payment intent ID
+    paymentIntent   String? // Stripe payment intent ID
+    stripeSessionId String? // Stripe Checkout session id
+    paymentUrl      String? // persisted Stripe Checkout session URL
+    errorMessage    String? // optional error text for reconciliation
+    attempts        Int     @default(0)
     createdAt     DateTime @default(now())
     updatedAt     DateTime @updatedAt
     stripeEventId String?  @unique // For webhook idempotency

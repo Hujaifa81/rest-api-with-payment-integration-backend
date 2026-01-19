@@ -7,12 +7,20 @@ import { createProductZodSchema, updateProductZodSchema } from "./product.valida
 
 const router = Router();
 
-router.post("/", checkAuth(...Object.values(Role)), validateRequest(createProductZodSchema), ProductController.createProduct);
+router.post(
+  "/",
+  checkAuth(...Object.values(Role)),
+  validateRequest(createProductZodSchema),
+  ProductController.createProduct
+);
 router.get("/", ProductController.getAllProducts);
 router.get("/:id", ProductController.getProductById);
-router.put("/:id", checkAuth(...Object.values(Role)), validateRequest(updateProductZodSchema), ProductController.updateProduct);
+router.put(
+  "/:id",
+  checkAuth(...Object.values(Role)),
+  validateRequest(updateProductZodSchema),
+  ProductController.updateProduct
+);
 router.delete("/:id", checkAuth(...Object.values(Role)), ProductController.deleteProduct);
 
-
 export default router;
-

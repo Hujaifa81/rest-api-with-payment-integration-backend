@@ -3,9 +3,8 @@ import ENV from "../../config/env";
 import { IJWTPayload } from "../../interface/declare";
 import { generateToken, verifyToken } from "../helper";
 import httpStatus from "http-status";
-import { User } from "../../../generated/prisma/client"
+import { User } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
-
 
 export const createUserTokens = (user: Partial<User>) => {
   const jwtPayload = {
@@ -43,7 +42,7 @@ export const createNewAccessTokenWithRefreshToken = async (refreshToken: string)
   if (!isUserExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, "User does not exist");
   }
-  
+
   if (isUserExist.isDeleted) {
     throw new ApiError(httpStatus.BAD_REQUEST, "User is deleted");
   }

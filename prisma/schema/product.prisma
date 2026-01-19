@@ -2,7 +2,7 @@ model Product {
   id          String      @id @default(uuid())
   name        String   @unique
   description String?
-  price       Float
+  priceCents  Int
   quantity    Int       @default(0)
   orderItems  OrderItem[]
   createdAt   DateTime @default(now())

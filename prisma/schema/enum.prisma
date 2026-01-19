@@ -8,6 +8,9 @@ enum AuthProviderType {
 
 enum PaymentStatus {
     UNPAID
+    PENDING_RECONCILE
+    FAILED
     PAID
+    CANCELED
 }
 
