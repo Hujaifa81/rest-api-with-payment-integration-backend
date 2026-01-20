@@ -1,7 +1,9 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable no-undef */
-const fs = require("fs");
-const path = require("path");
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 function copyRecursive(src, dest) {
   if (!fs.existsSync(src)) return;
@@ -17,7 +19,7 @@ function copyRecursive(src, dest) {
   }
 }
 
-const from = path.join(__dirname, "src", "shared", "utils", "templates");
-const to = path.join(__dirname, "dist", "shared", "utils", "templates");
+const from = path.join(__dirname, 'src', 'shared', 'utils', 'templates');
+const to = path.join(__dirname, 'dist', 'shared', 'utils', 'templates');
 copyRecursive(from, to);
-console.log("Templates copied to", to);
+console.log('Templates copied to', to);
