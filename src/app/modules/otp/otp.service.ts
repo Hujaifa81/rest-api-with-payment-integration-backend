@@ -44,7 +44,9 @@ const sendOTP = async (email: string, name: string) => {
 };
 
 const verifyOTP = async (email: string, otp: string) => {
-  const user = await prisma.user.findFirst({ where: { email, isVerified: false } });
+  const user = await prisma.user.findFirst({ where: { email, 
+    // isVerified: false 
+  } });
 
   if (!user) {
     throw new ApiError(httpsStatus.NOT_FOUND, "User not found");
