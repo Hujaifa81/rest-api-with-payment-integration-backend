@@ -32,11 +32,11 @@ passport.use(
         }
 
 
-        if (!isUserExist.isVerified) {
-          return done(null, false, {
-            message: `User is not verified.Use verified email and verify email by otp.`,
-          });
-        }
+        // if (!isUserExist.isVerified) {
+        //   return done(null, false, {
+        //     message: `User is not verified.Use verified email and verify email by otp.`,
+        //   });
+        // }
 
         const isGoogleAuthenticated = isUserExist.authProviders.some(
           (providerObjects) => providerObjects.provider == AuthProviderType.GOOGLE
@@ -98,12 +98,12 @@ passport.use(
             return done(null, false, { message: "User not found" });
           }
 
-          if (!user.isVerified) {
-            await prisma.user.update({
-              where: { id: user.id },
-              data: { isVerified: true },
-            });
-          }
+          // if (!user.isVerified) {
+          //   await prisma.user.update({
+          //     where: { id: user.id },
+          //     data: { isVerified: true },
+          //   });
+          // }
           
           if (user?.isDeleted) {
             return done(null, false, { message: "User is deleted" });
@@ -124,10 +124,10 @@ passport.use(
             return done(null, false, { message: "User is deleted" });
           }
 
-          await prisma.user.update({
-            where: { id: user.id },
-            data: { isVerified: true },
-          });
+          // await prisma.user.update({
+          //   where: { id: user.id },
+          //   data: { isVerified: true },
+          // });
 
           await prisma.authProvider.create({
             data: {
@@ -147,7 +147,7 @@ passport.use(
               email,
               name: profile.displayName,
               role: Role.USER,
-              isVerified: true,
+              // isVerified: true,
             },
           });
 

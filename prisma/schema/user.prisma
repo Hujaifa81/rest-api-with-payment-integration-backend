@@ -3,7 +3,6 @@ model User {
   email         String         @unique
   password      String?
   name          String?
-  isVerified    Boolean        @default(false)
   orders        Order[]
   authProviders AuthProvider[]
   role          Role           @default(USER)
