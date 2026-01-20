@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc && node copy-templates.js",
+    "postinstall": "npm run db:generate",
     "build:render": "npm install --include=dev && npm db:generate && npm run build",
     "dev": "npx tsx watch ./src/index.ts",
     "worker": "npx tsx src/workers/outboxWorker.ts",

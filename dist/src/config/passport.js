@@ -68,6 +68,12 @@ passport.use(new GoogleStrategy({
             if (!user) {
                 return done(null, false, { message: "User not found" });
             }
+            if (!user.isVerified) {
+                await prisma.user.update({
+                    where: { id: user.id },
+                    data: { isVerified: true },
+                });
+            }
             if (user?.isDeleted) {
                 return done(null, false, { message: "User is deleted" });
             }
@@ -81,6 +87,10 @@ passport.use(new GoogleStrategy({
             if (user.isDeleted) {
                 return done(null, false, { message: "User is deleted" });
             }
+            await prisma.user.update({
+                where: { id: user.id },
+                data: { isVerified: true },
+            });
             await prisma.authProvider.create({
                 data: {
                     provider: AuthProviderType.GOOGLE,
@@ -96,6 +106,7 @@ passport.use(new GoogleStrategy({
                     email,
                     name: profile.displayName,
                     role: Role.USER,
+                    isVerified: true,
                 },
             });
             await tx.authProvider.create({
