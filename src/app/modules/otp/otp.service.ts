@@ -66,13 +66,13 @@ const verifyOTP = async (email: string, otp: string) => {
     throw new ApiError(httpsStatus.BAD_REQUEST, "Invalid OTP");
   }
 
-  await Promise.all([
-    prisma.user.update({
-      where: { email },
-      data: { isVerified: true },
-    }),
-    redisClient.del([redisKey]),
-  ]);
+  // await Promise.all([
+  //   prisma.user.update({
+  //     where: { email },
+  //     data: { isVerified: true },
+  //   }),
+  //   redisClient.del([redisKey]),
+  // ]);
 };
 
 export const OTPService = {
