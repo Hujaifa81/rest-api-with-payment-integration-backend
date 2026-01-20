@@ -2,6 +2,7 @@
 import ejs from "ejs";
 import nodemailer from "nodemailer";
 import path from "path";
+import { fileURLToPath } from "url";
 import ENV from "../../config/env.js";
 import ApiError from "../../app/errors/ApiError.js";
 
@@ -41,8 +42,10 @@ export const sendEmail = async ({
   attachments,
 }: SendEmailOptions) => {
   try {
-    const templatePath = path.join(__dirname, `templates/${templateName}.ejs`);
-    const html = await ejs.renderFile(templatePath, templateData);
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const templatePath = path.join(__dirname, `templates/${templateName}.ejs`);
+  const html = await ejs.renderFile(templatePath, templateData);
     const info = await transporter.sendMail({
       from: ENV.EMAIL_SENDER.SMTP_FROM,
       to: to,

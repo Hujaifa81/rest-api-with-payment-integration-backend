@@ -20,6 +20,7 @@ function copyRecursive(src, dest) {
 }
 
 const from = path.join(__dirname, 'src', 'shared', 'utils', 'templates');
-const to = path.join(__dirname, 'dist', 'shared', 'utils', 'templates');
+// Place templates where compiled modules expect them under dist/src
+const to = path.join(__dirname, 'dist', 'src', 'shared', 'utils', 'templates');
 copyRecursive(from, to);
 console.log('Templates copied to', to);
