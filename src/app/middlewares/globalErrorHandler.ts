@@ -5,18 +5,19 @@ import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import { ZodError } from "zod";
 import { Prisma } from "../../../generated/prisma/client";
+import ENV from "../../config/env";
 
-// Sanitize error to prevent exposing sensitive information in production
-const sanitizeError = (error: any) => {
-  // Don't expose Prisma errors in production
-  if (process.env.NODE_ENV === "production" && error.code?.startsWith("P")) {
-    return {
-      message: "Database operation failed",
-      errorDetails: null,
-    };
-  }
-  return error;
-};
+// // Sanitize error to prevent exposing sensitive information in production
+// const sanitizeError = (error: any) => {
+//   // Don't expose Prisma errors in production
+//   if (ENV.NODE_ENV === "production" && error.code?.startsWith("P")) {
+//     return {
+//       message: "Database operation failed",
+//       errorDetails: null,
+//     };
+//   }
+//   return error;
+// };
 
 export const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   let statusCode: number = err.statusCode || httpStatus.INTERNAL_SERVER_ERROR;
@@ -115,12 +116,12 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
     error = err.message;
     statusCode = httpStatus.BAD_REQUEST;
   }
-  // Sanitize error before sending response
-  const sanitizedError = sanitizeError(error);
+  // // Sanitize error before sending response
+  // const sanitizedError = sanitizeError(error);
 
   res.status(statusCode).json({
     success,
     message,
-    error: sanitizedError,
+    error: error,
   });
 };

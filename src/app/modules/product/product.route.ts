@@ -15,7 +15,7 @@ router.post(
 );
 router.get("/", ProductController.getAllProducts);
 router.get("/:id", ProductController.getProductById);
-router.put(
+router.patch(
   "/:id",
   checkAuth(...Object.values(Role)),
   validateRequest(updateProductZodSchema),

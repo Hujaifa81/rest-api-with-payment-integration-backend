@@ -1,9 +1,9 @@
 import { AuthProviderType, User } from "../../../../generated/prisma/client";
-import { prisma } from "../../../lib/prisma";
 import { ApiError } from "../../errors";
 import httpStatus from "http-status-codes";
 import bcryptjs from "bcryptjs";
 import ENV from "../../../config/env";
+import { prisma } from "../../../lib/prisma";
 
 const createUser = async (payload: Partial<User>) => {
   const { email, password, ...rest } = payload;

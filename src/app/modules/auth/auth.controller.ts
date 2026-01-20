@@ -21,7 +21,8 @@ const credentialsLogin = catchAsync(async (req: Request, res: Response, next: Ne
 
     const userTokens = await createUserTokens(user);
 
-    const { password: pass, ...rest } = user.toObject();
+    // `user` is a plain object from Prisma; no `toObject()` method.
+    const { password: pass, ...rest } = user as any;
 
     setAuthCookie(res, userTokens);
 

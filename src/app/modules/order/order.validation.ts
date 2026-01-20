@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const orderItemSchema = z.object({
-  productId: z.string({ error: "Product ID must be string" }).uuid({ error: "Invalid product id" }),
+  productId: z.uuid({ message: "Invalid product id" }),
   quantity: z
     .number({ error: "Quantity must be a number" })
     .int({ error: "Quantity must be integer" })

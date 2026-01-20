@@ -5,10 +5,11 @@ import { ApiError } from "../../errors";
 import httpStatus from "http-status-codes";
 import { catchAsync, sendResponse } from "../../../shared";
 import PaymentService from "./payment.service";
+import ENV from "../../../config/env";
 
 const stripeWebhookHandler = catchAsync(async (req: Request, res: Response) => {
   const sig = req.headers["stripe-signature"] as string | undefined;
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const webhookSecret = ENV.STRIPE.STRIPE_WEBHOOK_SECRET;
   let event: any;
   try {
     if (!webhookSecret || !sig)

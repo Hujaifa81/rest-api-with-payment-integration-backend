@@ -28,6 +28,13 @@ export const checkAuth =
         throw new ApiError(httpStatus.UNAUTHORIZED, "User does not exist");
       }
 
+      if (!isUserExist.isVerified) {
+        throw new ApiError(
+          httpStatus.UNAUTHORIZED,
+          "User has not verified email.so first verify email"
+        );
+      }
+
       if (isUserExist.isDeleted) {
         throw new ApiError(httpStatus.UNAUTHORIZED, "User is deleted");
       }

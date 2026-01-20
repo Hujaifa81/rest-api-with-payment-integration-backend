@@ -4,16 +4,37 @@ import { AuthController } from "./auth.controller";
 import { Role } from "../../../../generated/prisma/enums";
 import ENV from "../../../config/env";
 import passport from "passport";
+import {
+  loginZodSchema,
+  changePasswordZodSchema,
+  setPasswordZodSchema,
+  forgotPasswordZodSchema,
+  resetPasswordZodSchema,
+} from "./auth.validation";
+import validateRequest from "../../middlewares/validateRequest";
 
 const router = Router();
 
-router.post("/login", AuthController.credentialsLogin);
+router.post("/login", validateRequest(loginZodSchema), AuthController.credentialsLogin);
 router.post("/refresh-token", AuthController.getNewAccessToken);
 router.post("/logout", AuthController.logout);
-router.post("/change-password", checkAuth(...Object.values(Role)), AuthController.changePassword);
-router.post("/set-password", checkAuth(...Object.values(Role)), AuthController.setPassword);
-router.post("/forgot-password", AuthController.forgotPassword);
-router.post("/reset-password", checkAuth(...Object.values(Role)), AuthController.resetPassword);
+router.post(
+  "/change-password",
+  checkAuth(...Object.values(Role)),
+  validateRequest(changePasswordZodSchema),
+  AuthController.changePassword
+);
+router.post(
+  "/forgot-password",
+  validateRequest(forgotPasswordZodSchema),
+  AuthController.forgotPassword
+);
+router.post(
+  "/reset-password",
+  checkAuth(...Object.values(Role)),
+  validateRequest(resetPasswordZodSchema),
+  AuthController.resetPassword
+);
 
 router.get("/google", async (req: Request, res: Response, next: NextFunction) => {
   const redirect = req.query.redirect || "/";
@@ -29,6 +50,14 @@ router.get(
     failureRedirect: `${ENV.FRONTEND_URL}/login?error=There is some issues with your account. Please contact with out support team!`,
   }),
   AuthController.googleCallbackController
+);
+
+//if user is sign up via google but wants to set password to login via credentials
+router.post(
+  "/set-password",
+  checkAuth(...Object.values(Role)),
+  validateRequest(setPasswordZodSchema),
+  AuthController.setPassword
 );
 
 export default router;

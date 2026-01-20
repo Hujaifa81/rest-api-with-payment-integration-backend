@@ -3,10 +3,11 @@ model User {
   email         String         @unique
   password      String?
   name          String?
+  isVerified    Boolean        @default(false)
   orders        Order[]
   authProviders AuthProvider[]
   role          Role           @default(USER)
-  isDeleted      Boolean        @default(true)
+  isDeleted      Boolean        @default(false)
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 

@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createServer, Server } from "http";
-import { prisma } from "./lib/prisma";
 import ENV from "./config/env";
 import app from "./app";
+import { prisma } from "./lib/prisma";
+import { connectRedis } from "./config/redis";
 
 async function connectToDB() {
   try {
@@ -28,6 +30,11 @@ class ServerCreator {
     return new Promise<void>((resolve) => {
       this.server.listen(ENV.PORT, async () => {
         await connectToDB();
+        try {
+          await connectRedis();
+        } catch (e: any) {
+          console.warn("Redis connect failed on startup:", e?.message || e);
+        }
         console.log(`Server listening at: http://localhost:${ENV.PORT}`);
         resolve();
       });

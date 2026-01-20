@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { prisma } from "../../../lib/prisma";
 import { stripe } from "../../../shared/helper/stripe";
 import { ApiError } from "../../errors";
@@ -32,11 +33,28 @@ export const PaymentService = {
       if (!paymentId) return;
       const payment = await prisma.payment.findUnique({ where: { id: paymentId } });
       if (!payment) return;
+      // Extract payment_intent id if present (can be string or object)
+      let paymentIntentId: string | null = null;
+      try {
+        if (session.payment_intent) {
+          paymentIntentId =
+            typeof session.payment_intent === "string"
+              ? session.payment_intent
+              : ((session.payment_intent as any)?.id ?? null);
+        }
+      } catch (e) {
+        console.error("Failed to extract payment_intent from session", e);
+        
+      }
 
       const txRes = await prisma.$transaction(async (tx) => {
         const updated = await tx.payment.updateMany({
           where: { id: paymentId, stripeEventId: null },
-          data: { status: "PAID", stripeEventId: event.id },
+          data: {
+            status: "PAID",
+            stripeEventId: event.id,
+            ...(paymentIntentId ? { paymentIntent: paymentIntentId } : {}),
+          },
         });
         if (updated.count > 0) {
           await tx.order.update({ where: { id: payment.orderId }, data: { status: "PAID" } });
@@ -136,6 +154,7 @@ export const PaymentService = {
       return null;
     }
   },
+
   async getPaymentStatus(paymentId: string) {
     if (!paymentId) throw new ApiError(httpStatus.BAD_REQUEST, "paymentId required");
     const payment = await prisma.payment.findUnique({ where: { id: paymentId } });
@@ -143,10 +162,36 @@ export const PaymentService = {
 
     // Prefer persisted paymentUrl in DB to avoid extra Stripe calls
     let paymentUrl: string | null = payment["paymentUrl"] || null;
+    let paymentIntentId: string | null = payment.paymentIntent || null;
     if (!paymentUrl && payment.stripeSessionId) {
       try {
-        const session = await stripe.checkout.sessions.retrieve(payment.stripeSessionId);
+        const session = await stripe.checkout.sessions.retrieve(payment.stripeSessionId, {
+          expand: ["payment_intent"],
+        } as any);
         paymentUrl = (session as any).url || null;
+        if (!paymentIntentId && session.payment_intent) {
+          paymentIntentId =
+            typeof session.payment_intent === "string"
+              ? (session.payment_intent as string)
+              : ((session.payment_intent as any)?.id ?? null);
+        }
+
+        // persist any discovered fields back to DB for future quick reads
+        const updates: any = {};
+        if (paymentUrl && !payment.paymentUrl) updates.paymentUrl = paymentUrl;
+        if (session.id && !payment.stripeSessionId) updates.stripeSessionId = session.id;
+        if (paymentIntentId && !payment.paymentIntent) updates.paymentIntent = paymentIntentId;
+        if (Object.keys(updates).length) {
+          try {
+            await prisma.payment.update({ where: { id: payment.id }, data: updates });
+            console.info("Persisted payment updates from session retrieve", {
+              paymentId: payment.id,
+              updates,
+            });
+          } catch (e) {
+            console.error("Failed to persist discovered session fields to payment", e);
+          }
+        }
       } catch (e) {
         console.error("Failed to retrieve Stripe session", payment.stripeSessionId, e);
       }
@@ -156,7 +201,6 @@ export const PaymentService = {
       paymentId: payment.id,
       status: payment.status,
       sessionId: payment.stripeSessionId || null,
-      paymentIntent: payment.paymentIntent || null,
       paymentUrl,
     };
   },

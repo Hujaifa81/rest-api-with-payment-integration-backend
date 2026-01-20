@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import ENV from "../config/env";
 import { prisma } from "../lib/prisma";
+
 import { processOutboxEvent } from "./outboxProcessor";
 
 function sleep(ms: number) {
@@ -23,7 +25,7 @@ export async function runOutboxWorker() {
     try {
       // Fetch candidates (unprocessed and not currently claimed)
       const candidates = await prisma.outboxEvent.findMany({
-        where: { processed: false, claimedAt: null, deadLetter: false },
+        where: { processed: false, claimedAt: null },
         take: 10,
         orderBy: { createdAt: "asc" },
       });
@@ -100,6 +102,6 @@ export async function runOutboxWorker() {
 }
 
 // Optional: auto-start worker when imported in dev, guarded by env var
-if (process.env.START_OUTBOX_WORKER === "1") {
+if (ENV.START_OUTBOX_WORKER === "1") {
   runOutboxWorker().catch((err) => console.error("Outbox worker failed", err));
 }

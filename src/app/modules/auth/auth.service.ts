@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IJWTPayload } from "../../../interface/declare";
-import { prisma } from "../../../lib/prisma";
 import { createNewAccessTokenWithRefreshToken } from "../../../shared";
 import { ApiError } from "../../errors";
 import httpStatus from "http-status-codes";
@@ -8,6 +7,8 @@ import bcryptjs from "bcryptjs";
 import ENV from "../../../config/env";
 import jwt from "jsonwebtoken";
 import { AuthProviderType } from "../../../../generated/prisma/enums";
+import { sendEmail } from "../../../shared/utils/sendEmail";
+import { prisma } from "../../../lib/prisma";
 
 const getNewAccessToken = async (refreshToken: string) => {
   const newAccessToken = await createNewAccessTokenWithRefreshToken(refreshToken);
@@ -92,15 +93,15 @@ const forgotPassword = async (email: string) => {
 
   const resetUILink = `${ENV.FRONTEND_URL}/reset-password?id=${isUserExist.id}&token=${resetToken}`;
 
-  // sendEmail({
-  //     to: isUserExist.email,
-  //     subject: "Password Reset",
-  //     templateName: "forgetPassword",
-  //     templateData: {
-  //         name: isUserExist.name,
-  //         resetUILink
-  //     }
-  // })
+  sendEmail({
+    to: isUserExist.email,
+    subject: "Password Reset",
+    templateName: "forgetPassword",
+    templateData: {
+      name: isUserExist.name,
+      resetUILink,
+    },
+  });
 };
 
 const setPassword = async (userId: string, plainPassword: string) => {

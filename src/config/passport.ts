@@ -3,9 +3,9 @@ import bcryptjs from "bcryptjs";
 import passport from "passport";
 import { Strategy as GoogleStrategy, Profile, VerifyCallback } from "passport-google-oauth20";
 import { Strategy as LocalStrategy } from "passport-local";
-import { prisma } from "../lib/prisma";
 import { AuthProviderType, Role } from "../../generated/prisma/enums";
 import ENV from "./env";
+import { prisma } from "../lib/prisma";
 
 passport.use(
   new LocalStrategy(
@@ -28,6 +28,12 @@ passport.use(
 
         if (isUserExist.isDeleted) {
           return done("User is deleted");
+        }
+
+        if (!isUserExist.isVerified) {
+          return done(null, false, {
+            message: `User is not verified.Use verified email and verify email by otp.`,
+          });
         }
 
         const isGoogleAuthenticated = isUserExist.authProviders.some(

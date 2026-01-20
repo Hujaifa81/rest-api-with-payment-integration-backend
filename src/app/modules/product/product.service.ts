@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Prisma, Product } from "../../../../generated/prisma/client";
-import { prisma } from "../../../lib/prisma";
 import { ApiError } from "../../errors";
 import httpStatus from "http-status-codes";
 import Decimal from "decimal.js";
+import { prisma } from "../../../lib/prisma";
 
 const createProduct = async (productData: Prisma.ProductCreateInput) => {
   const isProductExist = await prisma.product.findUnique({
@@ -14,7 +14,7 @@ const createProduct = async (productData: Prisma.ProductCreateInput) => {
     throw new ApiError(httpStatus.CONFLICT, "Product with this name already exists");
   }
 
-  // convert API-friendly `price` (float) to `priceCents` integer for DB
+  
   const data: any = { ...productData };
   if ((data as any).priceCents !== undefined) {
     if (!Number.isInteger((data as any).priceCents) || (data as any).priceCents < 0) {

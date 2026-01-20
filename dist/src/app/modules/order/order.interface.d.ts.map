@@ -1,0 +1,1 @@
+{"version":3,"file":"order.interface.d.ts","sourceRoot":"","sources":["../../../../../src/app/modules/order/order.interface.ts"],"names":[],"mappings":"AAAA,MAAM,WAAW,aAAa;IAC5B,SAAS,EAAE,MAAM,CAAC;IAClB,QAAQ,EAAE,MAAM,CAAC;CAClB;AAED,MAAM,WAAW,SAAS;IACxB,KAAK,EAAE,aAAa,EAAE,CAAC;IACvB,MAAM,CAAC,EAAE,MAAM,CAAC;CACjB;AAED,MAAM,MAAM,eAAe,GAAG,SAAS,CAAC"}

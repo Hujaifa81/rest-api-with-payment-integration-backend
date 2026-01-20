@@ -23,10 +23,9 @@ router.post(
   OrderController.createOrderWithPayLater
 );
 
-// initiate payment for an existing order (outbox-first)
+// initiate payment for an existing order (outbox-first / creates outbox event by default)
 router.post("/:orderId/pay", checkAuth(...Object.values(Role)), OrderController.initiatePayment);
 
-// initiate payment for an existing order (creates outbox event by default)
-router.post("/:orderId/pay", checkAuth(...Object.values(Role)), OrderController.initiatePayment);
+router.get("/", checkAuth(...Object.values(Role)), OrderController.listOrders);
 
 export default router;

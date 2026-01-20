@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { IJWTPayload } from "../../../interface/declare";
-import { prisma } from "../../../lib/prisma";
 import { ApiError } from "../../errors";
 import httpStatus from "http-status-codes";
 import { PaymentStatus } from "../../../../generated/prisma/enums";
 import { CreateOrderData } from "./order.interface";
 import { v4 as uuidv4 } from "uuid";
 import { OutboxEvent, Payment, Prisma } from "../../../../generated/prisma/client";
+import { processOutboxEvent } from "../../../workers/outboxProcessor";
+import { prisma } from "../../../lib/prisma";
 
 const createOrder = async (orderData: CreateOrderData, token: IJWTPayload) => {
   const user = await prisma.user.findUnique({ where: { id: token.userId } });
@@ -124,12 +126,49 @@ const createOrder = async (orderData: CreateOrderData, token: IJWTPayload) => {
     outbox?: OutboxEvent;
   };
   const { order, payment } = createdOrderTyped;
+  const outbox = (createdOrderTyped as any).outbox as OutboxEvent | undefined;
 
   // (We created the outbox event inside the transaction above.)
   // We'll let the worker build the `line_items` (it will fetch order/items and product names).
 
   // Let the worker process the outbox event. Immediate processing was removed
   // to keep claim/lease semantics consistent and avoid races.
+  // Attempt inline processing of the outbox so we can return a usable paymentUrl
+  if (outbox) {
+    const inlineClaimId = `inline-${process.pid}-${Date.now()}`;
+    try {
+      await prisma.outboxEvent.update({
+        where: { id: outbox.id },
+        data: { claimedAt: new Date(), claimedBy: inlineClaimId },
+      });
+      await processOutboxEvent({
+        id: outbox.id,
+        topic: outbox.topic,
+        payload: outbox.payload,
+      } as any);
+
+      const p = await prisma.payment.findUnique({ where: { id: payment.id } });
+      return { paymentUrl: p?.paymentUrl || null, orderId: order.id, paymentId: payment.id };
+    } catch (err: any) {
+      console.error(
+        "Inline outbox processing for createOrder failed, releasing claim and falling back to background worker",
+        err
+      );
+      try {
+        await prisma.outboxEvent.update({
+          where: { id: outbox.id },
+          data: { claimedAt: null, claimedBy: null },
+        });
+      } catch (clearErr) {
+        console.error(
+          "Failed to clear inline claim after createOrder processing failure",
+          clearErr
+        );
+      }
+      return { paymentUrl: null, orderId: order.id, paymentId: payment.id, queued: true };
+    }
+  }
+
   return { paymentUrl: null, orderId: order.id, paymentId: payment.id };
 };
 
@@ -224,7 +263,7 @@ const createOrderWithPayLater = async (orderData: CreateOrderData, token: IJWTPa
   };
   const { order, payment } = createdOrderTyped;
 
-  return { paymentUrl: null, orderId: order.id, paymentId: payment.id, payLater: true };
+  return { orderId: order.id, paymentId: payment.id, payLater: true };
 };
 
 const initiatePayment = async (
@@ -248,18 +287,75 @@ const initiatePayment = async (
     };
   }
 
-  // Default to outbox enqueue to preserve existing outbox processing and avoid creating Stripe resources inside request
+  // Outbox-first inline processing: create outbox event with an inline claim so workers skip it,
+  // then process it synchronously and return paymentUrl when successful.
+  const inlineClaimId = `inline-${process.pid}-${Date.now()}`;
   const payload = {
     orderId,
     paymentId,
     ...(opts?.customerEmail ? { customer_email: opts.customerEmail } : {}),
-  };
-  await prisma.outboxEvent.create({ data: { topic: "CREATE_STRIPE_SESSION", payload } });
-  return { queued: true };
+  } as any;
+
+  const outbox = await prisma.outboxEvent.create({
+    data: {
+      topic: "CREATE_STRIPE_SESSION",
+      payload,
+      claimedAt: new Date(),
+      claimedBy: inlineClaimId,
+    },
+  });
+
+  try {
+    // Call the same processor used by the worker for consistent behavior
+    await processOutboxEvent({
+      id: outbox.id,
+      topic: outbox.topic,
+      payload: outbox.payload,
+    } as any);
+
+    // Fetch payment and return persisted paymentUrl/sessionId
+    const p = await prisma.payment.findUnique({ where: { id: paymentId } });
+    return {
+      paymentUrl: p?.paymentUrl || null,
+      paymentId: p?.id || null,
+      orderId: p?.orderId || null,
+    };
+  } catch (err: any) {
+    console.error(
+      "Inline outbox processing failed, releasing claim and falling back to background worker",
+      err
+    );
+    // clear claim so background workers can pick it up
+    try {
+      await prisma.outboxEvent.update({
+        where: { id: outbox.id },
+        data: { claimedAt: null, claimedBy: null },
+      });
+    } catch (clearErr) {
+      console.error("Failed to clear inline claim after processing failure", clearErr);
+    }
+    return { queued: true };
+  }
+};
+
+const listOrders = async (token: IJWTPayload) => {
+  const user = await prisma.user.findUnique({ where: { id: token.userId } });
+  if (!user) {
+    throw new ApiError(httpStatus.NOT_FOUND, "User not found");
+  }
+
+  const orders = await prisma.order.findMany({
+    where: { userId: user.id },
+    include: { items: true },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return orders;
 };
 
 export const OrderService = {
   createOrder,
   createOrderWithPayLater,
   initiatePayment,
+  listOrders,
 };

@@ -7,6 +7,7 @@ const moduleRoutes: [string, Router][] = [
   ["/product", modules.productRoutes],
   ["/order", modules.orderRoutes],
   ["/payment", modules.paymentRoutes],
+  ["/otp", modules.otpRoutes],
 ];
 
 export default moduleRoutes.reduce((router, [path, route]) => router.use(path, route), Router());

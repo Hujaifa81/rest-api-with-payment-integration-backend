@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { catchAsync, sendResponse } from "../../../shared";
+import { prisma } from "../../../lib/prisma";
 import { OrderService } from "./order.service";
 import { IJWTPayload } from "../../../interface/declare";
 import httpStatus from "http-status-codes";
-import PaymentService from "../payment/payment.service";
 
 const createOrder = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const decodedToken = req.user;
@@ -46,8 +47,7 @@ const initiatePayment = catchAsync(async (req: Request, res: Response, next: Nex
     req.body && typeof req.body.viaOutbox !== "undefined" ? Boolean(req.body.viaOutbox) : true;
 
   // find payment for order
-  const prisma = await import("../../../lib/prisma");
-  const payment = await prisma.prisma.payment.findFirst({ where: { orderId } });
+  const payment = await prisma.payment.findFirst({ where: { orderId } });
   if (!payment) {
     return sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
@@ -69,8 +69,20 @@ const initiatePayment = catchAsync(async (req: Request, res: Response, next: Nex
   });
 });
 
+const listOrders = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const decodedToken = req.user as IJWTPayload;
+  const orders = await OrderService.listOrders(decodedToken);
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Orders retrieved successfully",
+    data: orders,
+  });
+});
+
 export const OrderController = {
   createOrder,
   createOrderWithPayLater,
   initiatePayment,
+  listOrders,
 };
