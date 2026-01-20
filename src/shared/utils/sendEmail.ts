@@ -9,18 +9,34 @@ import ApiError from "../../app/errors/ApiError.js";
 
 const smtpPort = Number(ENV.EMAIL_SENDER.SMTP_PORT || 0);
 const smtpSecure = smtpPort === 465; // use SSL only for port 465
+const smtpAuth =
+  ENV.EMAIL_SENDER.SMTP_USER && ENV.EMAIL_SENDER.SMTP_PASS
+    ? {
+        user: ENV.EMAIL_SENDER.SMTP_USER,
+        pass: ENV.EMAIL_SENDER.SMTP_PASS,
+      }
+    : undefined;
+
 const transporter = nodemailer.createTransport({
   host: ENV.EMAIL_SENDER.SMTP_HOST,
   port: smtpPort || undefined,
   secure: smtpSecure,
-  auth:
-    ENV.EMAIL_SENDER.SMTP_USER && ENV.EMAIL_SENDER.SMTP_PASS
-      ? {
-          user: ENV.EMAIL_SENDER.SMTP_USER,
-          pass: ENV.EMAIL_SENDER.SMTP_PASS,
-        }
-      : undefined,
+  auth: smtpAuth,
+  logger: true,
+  debug: true,
+  tls: { minVersion: "TLSv1.2" },
 });
+
+// Non-blocking verify to surface connection issues in logs (helpful on platforms without shell)
+(async () => {
+  try {
+    await transporter.verify();
+    console.log("SMTP verify: connection OK");
+  } catch (err: any) {
+    console.error("SMTP verify failed:", err && err.message ? err.message : err);
+    console.error(err);
+  }
+})();
 
 interface SendEmailOptions {
   to: string;
