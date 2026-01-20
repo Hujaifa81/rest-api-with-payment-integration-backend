@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { prisma } from "../../../lib/prisma";
-import { stripe } from "../../../shared/helper/stripe";
-import { ApiError } from "../../errors";
+import { prisma } from "../../../lib/prisma.js";
+import { stripe } from "../../../shared/helper/stripe.js";
+import ApiError  from "../../errors/ApiError.js";
 import httpStatus from "http-status-codes";
 
 const restoreStockIfNeeded = async (tx: any, orderId: string) => {

@@ -2,8 +2,9 @@
 import ejs from "ejs";
 import nodemailer from "nodemailer";
 import path from "path";
-import ENV from "../../config/env";
-import { ApiError } from "../../app/errors";
+import ENV from "../../config/env.js";
+import ApiError from "../../app/errors/ApiError.js";
+
 
 const smtpPort = Number(ENV.EMAIL_SENDER.SMTP_PORT || 0);
 const smtpSecure = smtpPort === 465; // use SSL only for port 465

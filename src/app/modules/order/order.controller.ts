@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
-import { catchAsync, sendResponse } from "../../../shared";
-import { prisma } from "../../../lib/prisma";
-import { OrderService } from "./order.service";
-import { IJWTPayload } from "../../../interface/declare";
+import { catchAsync, sendResponse } from "../../../shared/utils/index.js";
+import { prisma } from "../../../lib/prisma.js";
+import { OrderService } from "./order.service.js";
+import { IJWTPayload } from "../../../interface/declare/index.js";
 import httpStatus from "http-status-codes";
 
 const createOrder = catchAsync(async (req: Request, res: Response, next: NextFunction) => {

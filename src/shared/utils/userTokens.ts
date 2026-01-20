@@ -1,10 +1,12 @@
-import { ApiError } from "../../app/errors";
-import ENV from "../../config/env";
-import { IJWTPayload } from "../../interface/declare";
-import { generateToken, verifyToken } from "../helper";
+
 import httpStatus from "http-status";
-import { prisma } from "../../lib/prisma";
-import { User } from "../../../generated/prisma/client";
+import { generateToken, verifyToken } from "../helper/jwtHelper.js";
+import { User } from "../../../generated/prisma/client.js";
+import { IJWTPayload } from "../../interface/declare/index.js";
+import ENV from "../../config/env.js";
+import { prisma } from "../../lib/prisma.js";
+import ApiError from "../../app/errors/ApiError.js";
+
 
 export const createUserTokens = (user: Partial<User>) => {
   const jwtPayload = {

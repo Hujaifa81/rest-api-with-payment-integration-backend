@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from "express";
-import { stripe } from "../../../shared/helper/stripe";
-import { ApiError } from "../../errors";
+import { stripe } from "../../../shared/helper/stripe.js";
+import ApiError  from "../../errors/ApiError.js";
 import httpStatus from "http-status-codes";
-import { catchAsync, sendResponse } from "../../../shared";
-import PaymentService from "./payment.service";
-import ENV from "../../../config/env";
+import { catchAsync, sendResponse } from "../../../shared/utils/index.js";
+import PaymentService from "./payment.service.js";
+import ENV from "../../../config/env.js";
 
 const stripeWebhookHandler = catchAsync(async (req: Request, res: Response) => {
   const sig = req.headers["stripe-signature"] as string | undefined;

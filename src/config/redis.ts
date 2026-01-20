@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from "redis";
-import ENV from "./env";
+import ENV from "./env.js";
 
 export const redisClient = createClient({
   url: ENV.REDIS.REDIS_URL,

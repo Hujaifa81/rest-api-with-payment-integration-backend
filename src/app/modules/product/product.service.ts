@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Prisma, Product } from "../../../../generated/prisma/client";
-import { ApiError } from "../../errors";
+import { Prisma, Product } from "../../../../generated/prisma/client.js";
 import httpStatus from "http-status-codes";
 import Decimal from "decimal.js";
-import { prisma } from "../../../lib/prisma";
+import { prisma } from "../../../lib/prisma.js";
+import ApiError from "../../errors/ApiError.js";
 
 const createProduct = async (productData: Prisma.ProductCreateInput) => {
   const isProductExist = await prisma.product.findUnique({
@@ -22,9 +22,10 @@ const createProduct = async (productData: Prisma.ProductCreateInput) => {
     }
   } else if ((data as any).price !== undefined) {
     try {
-      const dec = new Decimal((data as any).price as any);
+      const DecimalClass: any = (Decimal as any)?.default ?? Decimal;
+      const dec = new DecimalClass((data as any).price as any);
       if (dec.isNegative()) throw new ApiError(httpStatus.BAD_REQUEST, "Price must be >= 0");
-      data.priceCents = dec.times(100).toDecimalPlaces(0, Decimal.ROUND_HALF_UP).toNumber();
+      data.priceCents = dec.times(100).toDecimalPlaces(0, DecimalClass.ROUND_HALF_UP).toNumber();
       delete data.price;
     } catch (err) {
       console.log(err);
@@ -87,9 +88,10 @@ const updateProduct = async (productId: string, updateData: Prisma.ProductUpdate
     }
   } else if ((data as any).price !== undefined) {
     try {
-      const dec = new Decimal((data as any).price as any);
+      const DecimalClass: any = (Decimal as any)?.default ?? Decimal;
+      const dec = new DecimalClass((data as any).price as any);
       if (dec.isNegative()) throw new ApiError(httpStatus.BAD_REQUEST, "Price must be >= 0");
-      data.priceCents = dec.times(100).toDecimalPlaces(0, Decimal.ROUND_HALF_UP).toNumber();
+      data.priceCents = dec.times(100).toDecimalPlaces(0, DecimalClass.ROUND_HALF_UP).toNumber();
       delete data.price;
     } catch (err) {
       console.log(err);

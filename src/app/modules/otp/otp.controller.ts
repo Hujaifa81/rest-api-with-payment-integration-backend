@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { catchAsync, sendResponse } from "../../../shared";
-import { OTPService } from "./otp.service";
+import { catchAsync, sendResponse } from "../../../shared/utils/index.js";
+import { OTPService } from "./otp.service.js";
 
 const sendOTP = catchAsync(async (req: Request, res: Response) => {
   const { email, name } = req.body;

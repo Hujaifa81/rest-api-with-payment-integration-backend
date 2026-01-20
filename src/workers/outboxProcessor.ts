@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { prisma } from "../lib/prisma";
-import { stripe } from "../shared/helper/stripe";
+import { prisma } from "../lib/prisma.js";
+import { stripe } from "../shared/helper/stripe.js";
 
 interface OutboxPayload {
   orderId: string;

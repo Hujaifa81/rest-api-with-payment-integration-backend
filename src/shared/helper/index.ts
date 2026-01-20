@@ -1,1 +1,1 @@
-export * from "./jwtHelper";
+export * from "./jwtHelper.js";

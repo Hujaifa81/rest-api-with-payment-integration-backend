@@ -1,5 +1,7 @@
-import { z } from "zod";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Decimal from "decimal.js";
+import { z } from "zod";
+
 
 export const createProductZodSchema = z.object({
   name: z
@@ -15,7 +17,8 @@ export const createProductZodSchema = z.object({
   price: z.union([z.string(), z.number()]).refine(
     (v) => {
       try {
-        const dec = new Decimal(typeof v === "string" ? v.trim() : v);
+        const DecimalClass: any = (Decimal as any)?.default ?? Decimal;
+        const dec = new DecimalClass(typeof v === "string" ? v.trim() : v);
         return !dec.isNegative();
       } catch {
         return false;
@@ -47,11 +50,12 @@ export const updateProductZodSchema = z.object({
     .refine(
       (v) => {
         try {
-          const dec = new Decimal(typeof v === "string" ? v.trim() : v);
-          return !dec.isNegative();
-        } catch {
-          return false;
-        }
+            const DecimalClass: any = (Decimal as any)?.default ?? Decimal;
+            const dec = new DecimalClass(typeof v === "string" ? v.trim() : v);
+            return !dec.isNegative();
+          } catch {
+            return false;
+          }
       },
       { message: "Price must be a non-negative number" }
     )

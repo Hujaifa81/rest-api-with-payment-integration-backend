@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import ENV from "../config/env";
-import { prisma } from "../lib/prisma";
+import ENV from "../config/env.js";
+import { prisma } from "../lib/prisma.js";
 
-import { processOutboxEvent } from "./outboxProcessor";
+import { processOutboxEvent } from "./outboxProcessor.js";
 
 function sleep(ms: number) {
   return new Promise((r) => setTimeout(r, ms));

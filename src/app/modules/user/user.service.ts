@@ -1,9 +1,12 @@
-import { AuthProviderType, User } from "../../../../generated/prisma/client";
-import { ApiError } from "../../errors";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import httpStatus from "http-status-codes";
 import bcryptjs from "bcryptjs";
-import ENV from "../../../config/env";
-import { prisma } from "../../../lib/prisma";
+import ApiError from "../../errors/ApiError.js";
+import { AuthProviderType, User } from "../../../../generated/prisma/client.js";
+import { prisma } from "../../../lib/prisma.js";
+import ENV from "../../../config/env.js";
+
 
 const createUser = async (payload: Partial<User>) => {
   const { email, password, ...rest } = payload;
@@ -24,7 +27,7 @@ const createUser = async (payload: Partial<User>) => {
 
   const hashedPassword = await bcryptjs.hash(password, Number(ENV.BCRYPT_SALT_ROUND));
 
-  const result = await prisma.$transaction(async (tnx) => {
+  const result = await prisma.$transaction(async (tnx:any) => {
     const user = await tnx.user.create({
       data: {
         email,

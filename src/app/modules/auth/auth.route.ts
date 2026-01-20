@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { checkAuth } from "../../middlewares";
-import { AuthController } from "./auth.controller";
-import { Role } from "../../../../generated/prisma/enums";
-import ENV from "../../../config/env";
+import { checkAuth } from "../../middlewares/checkAuth.js";
+import { AuthController } from "./auth.controller.js";
+import { Role } from "../../../../generated/prisma/enums.js";
+import ENV from "../../../config/env.js";
 import passport from "passport";
 import {
   loginZodSchema,
@@ -10,8 +10,8 @@ import {
   setPasswordZodSchema,
   forgotPasswordZodSchema,
   resetPasswordZodSchema,
-} from "./auth.validation";
-import validateRequest from "../../middlewares/validateRequest";
+} from "./auth.validation.js";
+import validateRequest from "../../middlewares/validateRequest.js";
 
 const router = Router();
 

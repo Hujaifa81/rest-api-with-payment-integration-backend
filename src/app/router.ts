@@ -1,4 +1,4 @@
-import * as modules from "./modules";
+import * as modules from "./modules/index.js";
 import { Router } from "express";
 
 const moduleRoutes: [string, Router][] = [

@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IJWTPayload } from "../../../interface/declare";
-import { createNewAccessTokenWithRefreshToken } from "../../../shared";
-import { ApiError } from "../../errors";
+
 import httpStatus from "http-status-codes";
 import bcryptjs from "bcryptjs";
-import ENV from "../../../config/env";
+
 import jwt from "jsonwebtoken";
-import { AuthProviderType } from "../../../../generated/prisma/enums";
-import { sendEmail } from "../../../shared/utils/sendEmail";
-import { prisma } from "../../../lib/prisma";
+import { createNewAccessTokenWithRefreshToken } from "../../../shared/utils/userTokens.js";
+import { IJWTPayload } from "../../../interface/declare/index.js";
+import { prisma } from "../../../lib/prisma.js";
+import ApiError from "../../errors/ApiError.js";
+import ENV from "../../../config/env.js";
+import { sendEmail } from "../../../shared/utils/sendEmail.js";
+import { AuthProviderType } from "../../../../generated/prisma/enums.js";
+
 
 const getNewAccessToken = async (refreshToken: string) => {
   const newAccessToken = await createNewAccessTokenWithRefreshToken(refreshToken);
@@ -118,7 +121,7 @@ const setPassword = async (userId: string, plainPassword: string) => {
 
   if (
     user.password &&
-    user.authProviders.some((providerObject) => providerObject.provider === AuthProviderType.GOOGLE)
+    user.authProviders.some((providerObject:any) => providerObject.provider === AuthProviderType.GOOGLE)
   ) {
     throw new ApiError(
       httpStatus.BAD_REQUEST,
@@ -128,7 +131,7 @@ const setPassword = async (userId: string, plainPassword: string) => {
 
   const hashedPassword = await bcryptjs.hash(plainPassword, Number(ENV.BCRYPT_SALT_ROUND));
 
-  await prisma.$transaction(async (tx) => {
+  await prisma.$transaction(async (tx:any) => {
     await tx.user.update({
       where: { id: userId },
       data: { password: hashedPassword },

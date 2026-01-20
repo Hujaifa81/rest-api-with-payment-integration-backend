@@ -1,13 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import passport from "passport";
-import ENV from "../../../config/env";
-import { IJWTPayload } from "../../../interface/declare";
-import { catchAsync, createUserTokens, sendResponse, setAuthCookie } from "../../../shared";
-import { ApiError } from "../../errors";
-import { AuthService } from "./auth.service";
+
 import { Request, Response, NextFunction } from "express";
 import httpStatus from "http-status-codes";
+import ApiError from "../../errors/ApiError.js";
+import { catchAsync } from "../../../shared/utils/catchAsync.js";
+import { createUserTokens } from "../../../shared/utils/userTokens.js";
+import { setAuthCookie } from "../../../shared/utils/setCookie.js";
+import { sendResponse } from "../../../shared/utils/sendResponse.js";
+import { AuthService } from "./auth.service.js";
+import ENV from "../../../config/env.js";
+import { IJWTPayload } from "../../../interface/declare/index.js";
 
 const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate("local", async (err: any, user: any, info: any) => {

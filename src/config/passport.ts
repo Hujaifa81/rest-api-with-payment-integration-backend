@@ -3,9 +3,10 @@ import bcryptjs from "bcryptjs";
 import passport from "passport";
 import { Strategy as GoogleStrategy, Profile, VerifyCallback } from "passport-google-oauth20";
 import { Strategy as LocalStrategy } from "passport-local";
-import { AuthProviderType, Role } from "../../generated/prisma/enums";
-import ENV from "./env";
-import { prisma } from "../lib/prisma";
+import { prisma } from "../lib/prisma.js";
+import { AuthProviderType, Role } from "../../generated/prisma/enums.js";
+import ENV from "./env.js";
+
 
 passport.use(
   new LocalStrategy(

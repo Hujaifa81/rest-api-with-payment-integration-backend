@@ -1,8 +1,8 @@
 // src/modules/otp/otp.routes.ts
 import express from "express";
-import { OTPController } from "./otp.controller";
-import validateRequest from "../../middlewares/validateRequest";
-import { sendOTPSchema, verifyOTPSchema } from "./otp.validation";
+import { OTPController } from "./otp.controller.js";
+import validateRequest from "../../middlewares/validateRequest.js";
+import { sendOTPSchema, verifyOTPSchema } from "./otp.validation.js";
 
 const router = express.Router();
 
