@@ -18,9 +18,9 @@ const sendOTP = async (email: string, name: string) => {
     throw new ApiError(httpsStatus.NOT_FOUND, "User not found");
   }
 
-  if (user.isVerified) {
-    throw new ApiError(401, "You are already verified");
-  }
+  // if (user.isVerified) {
+  //   throw new ApiError(401, "You are already verified");
+  // }
   const otp = generateOtp();
 
   const redisKey = `otp:${email}`;
@@ -50,9 +50,9 @@ const verifyOTP = async (email: string, otp: string) => {
     throw new ApiError(httpsStatus.NOT_FOUND, "User not found");
   }
 
-  if (user.isVerified) {
-    throw new ApiError(httpsStatus.BAD_REQUEST, "You are already verified");
-  }
+  // if (user.isVerified) {
+  //   throw new ApiError(httpsStatus.BAD_REQUEST, "You are already verified");
+  // }
 
   const redisKey = `otp:${email}`;
 
