@@ -3,8 +3,8 @@ import ENV from "../../config/env";
 import { IJWTPayload } from "../../interface/declare";
 import { generateToken, verifyToken } from "../helper";
 import httpStatus from "http-status";
-import { User } from "../../../generated/prisma/client";
 import { prisma } from "../../lib/prisma";
+import { User } from "../../../generated/prisma/client";
 
 export const createUserTokens = (user: Partial<User>) => {
   const jwtPayload = {
