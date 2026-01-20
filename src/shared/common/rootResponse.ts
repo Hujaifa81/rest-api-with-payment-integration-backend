@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import ENV from "../../config/env";
-import { formatDuration } from "../utils";
+import ENV from "../../config/env.js";
+import { formatDuration } from "../utils/index.js";
 
 export const rootResponse = (req: Request, res: Response) => {
   res.send({

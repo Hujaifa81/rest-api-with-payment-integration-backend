@@ -1,9 +1,9 @@
 import crypto from "crypto";
-import { prisma } from "../../../lib/prisma";
-import { ApiError } from "../../errors";
-import { redisClient } from "../../../config/redis";
+import { prisma } from "../../../lib/prisma.js";
+import { ApiError } from "../../errors/index.js";
+import { redisClient } from "../../../config/redis.js";
 import httpsStatus from "http-status-codes";
-import { sendEmail } from "../../../shared/utils/sendEmail";
+import { sendEmail } from "../../../shared/utils/sendEmail.js";
 const OTP_EXPIRATION = 2 * 60; // 2minute
 
 const generateOtp = (length = 6) => {

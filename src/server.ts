@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createServer, Server } from "http";
-import ENV from "./config/env";
-import app from "./app";
-import { prisma } from "./lib/prisma";
-import { connectRedis } from "./config/redis";
+import ENV from "./config/env.js";
+import app from "./app.js";
+import { prisma } from "./lib/prisma.js";
+import { connectRedis } from "./config/redis.js";
 
 async function connectToDB() {
   try {

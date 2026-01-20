@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Prisma } from "../../../../generated/prisma/client";
-import { catchAsync, sendResponse } from "../../../shared";
-import { ProductService } from "./product.service";
+import { Prisma } from "../../../../generated/prisma/client.js";
+import { catchAsync, sendResponse } from "../../../shared/index.js";
+import { ProductService } from "./product.service.js";
 import { Request, Response, NextFunction } from "express";
 import httpStatus from "http-status-codes";
 
