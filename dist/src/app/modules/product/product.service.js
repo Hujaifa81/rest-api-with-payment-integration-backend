@@ -1,7 +1,7 @@
-import { ApiError } from "../../errors";
 import httpStatus from "http-status-codes";
 import Decimal from "decimal.js";
-import { prisma } from "../../../lib/prisma";
+import { prisma } from "../../../lib/prisma.js";
+import ApiError from "../../errors/ApiError.js";
 const createProduct = async (productData) => {
     const isProductExist = await prisma.product.findUnique({
         where: { name: productData.name },
@@ -17,10 +17,11 @@ const createProduct = async (productData) => {
     }
     else if (data.price !== undefined) {
         try {
-            const dec = new Decimal(data.price);
+            const DecimalClass = Decimal?.default ?? Decimal;
+            const dec = new DecimalClass(data.price);
             if (dec.isNegative())
                 throw new ApiError(httpStatus.BAD_REQUEST, "Price must be >= 0");
-            data.priceCents = dec.times(100).toDecimalPlaces(0, Decimal.ROUND_HALF_UP).toNumber();
+            data.priceCents = dec.times(100).toDecimalPlaces(0, DecimalClass.ROUND_HALF_UP).toNumber();
             delete data.price;
         }
         catch (err) {
@@ -80,10 +81,11 @@ const updateProduct = async (productId, updateData) => {
     }
     else if (data.price !== undefined) {
         try {
-            const dec = new Decimal(data.price);
+            const DecimalClass = Decimal?.default ?? Decimal;
+            const dec = new DecimalClass(data.price);
             if (dec.isNegative())
                 throw new ApiError(httpStatus.BAD_REQUEST, "Price must be >= 0");
-            data.priceCents = dec.times(100).toDecimalPlaces(0, Decimal.ROUND_HALF_UP).toNumber();
+            data.priceCents = dec.times(100).toDecimalPlaces(0, DecimalClass.ROUND_HALF_UP).toNumber();
             delete data.price;
         }
         catch (err) {

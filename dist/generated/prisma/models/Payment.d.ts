@@ -501,6 +501,9 @@ export type PaymentUncheckedUpdateOneWithoutOrderNestedInput = {
     connect?: Prisma.PaymentWhereUniqueInput;
     update?: Prisma.XOR<Prisma.XOR<Prisma.PaymentUpdateToOneWithWhereWithoutOrderInput, Prisma.PaymentUpdateWithoutOrderInput>, Prisma.PaymentUncheckedUpdateWithoutOrderInput>;
 };
+export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null;
+};
 export type PaymentCreateWithoutOrderInput = {
     id?: string;
     amountCents: number;

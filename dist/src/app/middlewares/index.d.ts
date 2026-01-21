@@ -1,5 +1,5 @@
-export * from "./notFound";
-export * from "./globalErrorHandler";
-export * from "./validateRequest";
-export * from "./checkAuth";
+export * from "./notFound.js";
+export * from "./globalErrorHandler.js";
+export * from "./validateRequest.js";
+export * from "./checkAuth.js";
 //# sourceMappingURL=index.d.ts.map

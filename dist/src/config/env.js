@@ -1,32 +1,31 @@
-import { cleanEnv, str, num } from "envalid";
+import * as envalid from "envalid";
 import dotenv from "dotenv";
 import path from "path";
 dotenv.config({ path: path.join(process.cwd(), ".env") });
-const env = cleanEnv(process.env, {
-    NODE_ENV: str({ default: "development" }),
-    PORT: num({ default: 5000 }),
-    DATABASE_URL: str(),
-    WHITE_LIST_ORIGIN: str({ default: "*" }),
-    JWT_ACCESS_SECRET: str(),
-    JWT_ACCESS_EXPIRES: str(),
-    JWT_REFRESH_SECRET: str(),
-    JWT_REFRESH_EXPIRES: str(),
-    BCRYPT_SALT_ROUNDS: num({ default: 10 }),
-    FRONTEND_URL: str(),
-    GOOGLE_CLIENT_ID: str(),
-    GOOGLE_CLIENT_SECRET: str(),
-    GOOGLE_CALLBACK_URL: str(),
-    STRIPE_SECRET_KEY: str(),
-    STRIPE_CURRENCY: str({ default: "usd" }),
-    STRIPE_WEBHOOK_SECRET: str(),
-    START_OUTBOX_WORKER: str(),
-    EXPRESS_SESSION_SECRET: str(),
-    SMTP_HOST: str(),
-    SMTP_PORT: num(),
-    SMTP_PASS: str(),
-    SMTP_FROM: str(),
-    REDIS_URL: str(),
-    SMTP_USER: str(),
+const env = envalid.cleanEnv(process.env, {
+    NODE_ENV: envalid.str({ default: "development" }),
+    PORT: envalid.num({ default: 5000 }),
+    DATABASE_URL: envalid.str(),
+    WHITE_LIST_ORIGIN: envalid.str({ default: "*" }),
+    JWT_ACCESS_SECRET: envalid.str(),
+    JWT_ACCESS_EXPIRES: envalid.str(),
+    JWT_REFRESH_SECRET: envalid.str(),
+    JWT_REFRESH_EXPIRES: envalid.str(),
+    BCRYPT_SALT_ROUNDS: envalid.num({ default: 10 }),
+    FRONTEND_URL: envalid.str(),
+    GOOGLE_CLIENT_ID: envalid.str(),
+    GOOGLE_CLIENT_SECRET: envalid.str(),
+    GOOGLE_CALLBACK_URL: envalid.str(),
+    STRIPE_SECRET_KEY: envalid.str(),
+    STRIPE_CURRENCY: envalid.str({ default: "usd" }),
+    STRIPE_WEBHOOK_SECRET: envalid.str(),
+    EXPRESS_SESSION_SECRET: envalid.str(),
+    SMTP_HOST: envalid.str(),
+    SMTP_PORT: envalid.num(),
+    SMTP_PASS: envalid.str(),
+    SMTP_FROM: envalid.str(),
+    REDIS_URL: envalid.str(),
+    SMTP_USER: envalid.str(),
 });
 const ENV = {
     NODE_ENV: env.NODE_ENV,
@@ -60,7 +59,6 @@ const ENV = {
     REDIS: {
         REDIS_URL: env.REDIS_URL,
     },
-    START_OUTBOX_WORKER: env.START_OUTBOX_WORKER,
     BCRYPT_SALT_ROUND: env.BCRYPT_SALT_ROUNDS,
     FRONTEND_URL: env.FRONTEND_URL,
 };

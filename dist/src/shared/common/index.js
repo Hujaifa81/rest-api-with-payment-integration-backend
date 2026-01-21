@@ -1,3 +1,3 @@
-export * from "./corsOptions";
-export * from "./rootResponse";
+export * from "./corsOptions.js";
+export * from "./rootResponse.js";
 //# sourceMappingURL=index.js.map

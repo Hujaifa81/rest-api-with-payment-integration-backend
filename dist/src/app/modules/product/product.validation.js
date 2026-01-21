@@ -1,5 +1,6 @@
-import { z } from "zod";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Decimal from "decimal.js";
+import { z } from "zod";
 export const createProductZodSchema = z.object({
     name: z
         .string({ error: "Name must be string" })
@@ -11,7 +12,8 @@ export const createProductZodSchema = z.object({
         .optional(),
     price: z.union([z.string(), z.number()]).refine((v) => {
         try {
-            const dec = new Decimal(typeof v === "string" ? v.trim() : v);
+            const DecimalClass = Decimal?.default ?? Decimal;
+            const dec = new DecimalClass(typeof v === "string" ? v.trim() : v);
             return !dec.isNegative();
         }
         catch {
@@ -39,7 +41,8 @@ export const updateProductZodSchema = z.object({
         .union([z.string(), z.number()])
         .refine((v) => {
         try {
-            const dec = new Decimal(typeof v === "string" ? v.trim() : v);
+            const DecimalClass = Decimal?.default ?? Decimal;
+            const dec = new DecimalClass(typeof v === "string" ? v.trim() : v);
             return !dec.isNegative();
         }
         catch {

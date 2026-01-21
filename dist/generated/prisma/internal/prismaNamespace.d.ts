@@ -234,7 +234,6 @@ export declare const ModelName: {
     readonly AuthProvider: "AuthProvider";
     readonly Order: "Order";
     readonly OrderItem: "OrderItem";
-    readonly OutboxEvent: "OutboxEvent";
     readonly Payment: "Payment";
     readonly Product: "Product";
     readonly User: "User";
@@ -250,7 +249,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         omit: GlobalOmitOptions;
     };
     meta: {
-        modelProps: "authProvider" | "order" | "orderItem" | "outboxEvent" | "payment" | "product" | "user";
+        modelProps: "authProvider" | "order" | "orderItem" | "payment" | "product" | "user";
         txIsolationLevel: TransactionIsolationLevel;
     };
     model: {
@@ -473,80 +472,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
                 count: {
                     args: Prisma.OrderItemCountArgs<ExtArgs>;
                     result: runtime.Types.Utils.Optional<Prisma.OrderItemCountAggregateOutputType> | number;
-                };
-            };
-        };
-        OutboxEvent: {
-            payload: Prisma.$OutboxEventPayload<ExtArgs>;
-            fields: Prisma.OutboxEventFieldRefs;
-            operations: {
-                findUnique: {
-                    args: Prisma.OutboxEventFindUniqueArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$OutboxEventPayload> | null;
-                };
-                findUniqueOrThrow: {
-                    args: Prisma.OutboxEventFindUniqueOrThrowArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$OutboxEventPayload>;
-                };
-                findFirst: {
-                    args: Prisma.OutboxEventFindFirstArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$OutboxEventPayload> | null;
-                };
-                findFirstOrThrow: {
-                    args: Prisma.OutboxEventFindFirstOrThrowArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$OutboxEventPayload>;
-                };
-                findMany: {
-                    args: Prisma.OutboxEventFindManyArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$OutboxEventPayload>[];
-                };
-                create: {
-                    args: Prisma.OutboxEventCreateArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$OutboxEventPayload>;
-                };
-                createMany: {
-                    args: Prisma.OutboxEventCreateManyArgs<ExtArgs>;
-                    result: BatchPayload;
-                };
-                createManyAndReturn: {
-                    args: Prisma.OutboxEventCreateManyAndReturnArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$OutboxEventPayload>[];
-                };
-                delete: {
-                    args: Prisma.OutboxEventDeleteArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$OutboxEventPayload>;
-                };
-                update: {
-                    args: Prisma.OutboxEventUpdateArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$OutboxEventPayload>;
-                };
-                deleteMany: {
-                    args: Prisma.OutboxEventDeleteManyArgs<ExtArgs>;
-                    result: BatchPayload;
-                };
-                updateMany: {
-                    args: Prisma.OutboxEventUpdateManyArgs<ExtArgs>;
-                    result: BatchPayload;
-                };
-                updateManyAndReturn: {
-                    args: Prisma.OutboxEventUpdateManyAndReturnArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$OutboxEventPayload>[];
-                };
-                upsert: {
-                    args: Prisma.OutboxEventUpsertArgs<ExtArgs>;
-                    result: runtime.Types.Utils.PayloadToResult<Prisma.$OutboxEventPayload>;
-                };
-                aggregate: {
-                    args: Prisma.OutboxEventAggregateArgs<ExtArgs>;
-                    result: runtime.Types.Utils.Optional<Prisma.AggregateOutboxEvent>;
-                };
-                groupBy: {
-                    args: Prisma.OutboxEventGroupByArgs<ExtArgs>;
-                    result: runtime.Types.Utils.Optional<Prisma.OutboxEventGroupByOutputType>[];
-                };
-                count: {
-                    args: Prisma.OutboxEventCountArgs<ExtArgs>;
-                    result: runtime.Types.Utils.Optional<Prisma.OutboxEventCountAggregateOutputType> | number;
                 };
             };
         };
@@ -831,23 +756,6 @@ export declare const OrderItemScalarFieldEnum: {
     readonly priceCents: "priceCents";
 };
 export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum];
-export declare const OutboxEventScalarFieldEnum: {
-    readonly id: "id";
-    readonly topic: "topic";
-    readonly payload: "payload";
-    readonly processed: "processed";
-    readonly attempts: "attempts";
-    readonly error: "error";
-    readonly deadLetter: "deadLetter";
-    readonly deadLetterAt: "deadLetterAt";
-    readonly deadLetterReason: "deadLetterReason";
-    readonly deadLetterResolvedAt: "deadLetterResolvedAt";
-    readonly claimedAt: "claimedAt";
-    readonly claimedBy: "claimedBy";
-    readonly createdAt: "createdAt";
-    readonly processedAt: "processedAt";
-};
-export type OutboxEventScalarFieldEnum = (typeof OutboxEventScalarFieldEnum)[keyof typeof OutboxEventScalarFieldEnum];
 export declare const PaymentScalarFieldEnum: {
     readonly id: "id";
     readonly orderId: "orderId";
@@ -879,7 +787,6 @@ export declare const UserScalarFieldEnum: {
     readonly email: "email";
     readonly password: "password";
     readonly name: "name";
-    readonly isVerified: "isVerified";
     readonly role: "role";
     readonly isDeleted: "isDeleted";
     readonly createdAt: "createdAt";
@@ -891,21 +798,11 @@ export declare const SortOrder: {
     readonly desc: "desc";
 };
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
-export declare const JsonNullValueInput: {
-    readonly JsonNull: runtime.JsonNullClass;
-};
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
 export declare const QueryMode: {
     readonly default: "default";
     readonly insensitive: "insensitive";
 };
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
-export declare const JsonNullValueFilter: {
-    readonly DbNull: runtime.DbNullClass;
-    readonly JsonNull: runtime.JsonNullClass;
-    readonly AnyNull: runtime.AnyNullClass;
-};
-export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter];
 export declare const NullsOrder: {
     readonly first: "first";
     readonly last: "last";
@@ -958,14 +855,6 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>;
-/**
- * Reference to a field of type 'Json'
- */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>;
-/**
- * Reference to a field of type 'QueryMode'
- */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>;
 /**
  * Reference to a field of type 'Role'
  */
@@ -1079,7 +968,6 @@ export type GlobalOmitConfig = {
     authProvider?: Prisma.AuthProviderOmit;
     order?: Prisma.OrderOmit;
     orderItem?: Prisma.OrderItemOmit;
-    outboxEvent?: Prisma.OutboxEventOmit;
     payment?: Prisma.PaymentOmit;
     product?: Prisma.ProductOmit;
     user?: Prisma.UserOmit;

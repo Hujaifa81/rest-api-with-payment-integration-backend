@@ -1,6 +1,6 @@
-export * from "./formatDuration";
-export * from "./catchAsync";
-export * from "./sendResponse";
-export * from "./setCookie";
-export * from "./userTokens";
+export * from "./formatDuration.js";
+export * from "./catchAsync.js";
+export * from "./sendResponse.js";
+export * from "./setCookie.js";
+export * from "./userTokens.js";
 //# sourceMappingURL=index.js.map

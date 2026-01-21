@@ -1,29 +1,15 @@
-import { AuthProviderType, User } from "../../../../generated/prisma/client";
+import { AuthProviderType, User } from "../../../../generated/prisma/client.js";
 export declare const UserService: {
-    createUser: (payload: Partial<User>) => Promise<{
-        authProviders: {
-            provider: AuthProviderType;
-            providerId: string;
-        }[];
-        name: string | null;
-        id: string;
-        email: string;
-        isVerified: boolean;
-        role: import("../../../../generated/prisma/enums").Role;
-        isDeleted: boolean;
-        createdAt: Date;
-        updatedAt: Date;
-    } | {}>;
+    createUser: (payload: Partial<User>) => Promise<any>;
     getMe: (userId: string) => Promise<{
         authProviders: {
             provider: AuthProviderType;
             providerId: string;
         }[];
-        name: string | null;
         id: string;
         email: string;
-        isVerified: boolean;
-        role: import("../../../../generated/prisma/enums").Role;
+        name: string | null;
+        role: import("../../../../generated/prisma/enums.js").Role;
         isDeleted: boolean;
         createdAt: Date;
         updatedAt: Date;

@@ -4,7 +4,7 @@ export declare const PaymentService: {
     checkPaymentIntentStatus(paymentIntentId: string): Promise<import("stripe").Stripe.PaymentIntent.Status | null>;
     getPaymentStatus(paymentId: string): Promise<{
         paymentId: string;
-        status: import("../../../../generated/prisma/enums").PaymentStatus;
+        status: import("../../../../generated/prisma/enums.js").PaymentStatus;
         sessionId: string | null;
         paymentUrl: string | null;
     }>;

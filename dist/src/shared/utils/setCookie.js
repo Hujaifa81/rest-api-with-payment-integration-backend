@@ -1,4 +1,4 @@
-import ENV from "../../config/env";
+import ENV from "../../config/env.js";
 export const setAuthCookie = (res, tokenInfo) => {
     if (tokenInfo.accessToken) {
         res.cookie("accessToken", tokenInfo.accessToken, {

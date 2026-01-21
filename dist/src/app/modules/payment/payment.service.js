@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { prisma } from "../../../lib/prisma";
-import { stripe } from "../../../shared/helper/stripe";
-import { ApiError } from "../../errors";
+import { prisma } from "../../../lib/prisma.js";
+import { stripe } from "../../../shared/helper/stripe.js";
+import ApiError from "../../errors/ApiError.js";
 import httpStatus from "http-status-codes";
 const restoreStockIfNeeded = async (tx, orderId) => {
     const order = await tx.order.findUnique({ where: { id: orderId }, include: { items: true } });
@@ -21,7 +21,6 @@ const restoreStockIfNeeded = async (tx, orderId) => {
 };
 export const PaymentService = {
     async handleWebhookEvent(event) {
-        // Successful payments
         if (event.type === "checkout.session.completed" ||
             event.type === "checkout.session.async_payment_succeeded") {
             const session = event.data.object;
@@ -31,7 +30,6 @@ export const PaymentService = {
             const payment = await prisma.payment.findUnique({ where: { id: paymentId } });
             if (!payment)
                 return;
-            // Extract payment_intent id if present (can be string or object)
             let paymentIntentId = null;
             try {
                 if (session.payment_intent) {
@@ -64,7 +62,6 @@ export const PaymentService = {
                 console.debug("Stripe event already processed or payment had stripeEventId set", event.id);
             return;
         }
-        // Failed payment intents
         if (event.type === "payment_intent.payment_failed") {
             const pi = event.data.object;
             const paymentIntentId = pi?.id;
@@ -101,7 +98,37 @@ export const PaymentService = {
             }
             return;
         }
-        // Checkout session expired -> mark failed/canceled
+        if (event.type === "payment_intent.succeeded") {
+            const pi = event.data.object;
+            const paymentIntentId = pi?.id;
+            let payment = null;
+            if (paymentIntentId) {
+                payment = await prisma.payment.findFirst({ where: { paymentIntent: paymentIntentId } });
+            }
+            if (!payment && pi?.metadata?.paymentId) {
+                payment = await prisma.payment.findUnique({ where: { id: pi.metadata.paymentId } });
+            }
+            if (!payment)
+                return;
+            try {
+                const updated = await prisma.$transaction(async (tx) => {
+                    const u = await tx.payment.updateMany({
+                        where: { id: payment.id, stripeEventId: null },
+                        data: { status: "PAID", stripeEventId: event.id },
+                    });
+                    if (u.count === 0)
+                        return 0;
+                    await tx.order.update({ where: { id: payment.orderId }, data: { status: "PAID" } });
+                    return 1;
+                });
+                if (updated > 0)
+                    console.info("Processed payment_intent.succeeded and marked PAID for", payment.id);
+            }
+            catch (e) {
+                console.error("Failed to process payment_intent.succeeded", e);
+            }
+            return;
+        }
         if (event.type === "checkout.session.expired") {
             const session = event.data.object;
             const paymentId = session?.metadata?.paymentId;
@@ -158,7 +185,6 @@ export const PaymentService = {
         const payment = await prisma.payment.findUnique({ where: { id: paymentId } });
         if (!payment)
             throw new ApiError(httpStatus.NOT_FOUND, "Payment not found");
-        // Prefer persisted paymentUrl in DB to avoid extra Stripe calls
         let paymentUrl = payment["paymentUrl"] || null;
         let paymentIntentId = payment.paymentIntent || null;
         if (!paymentUrl && payment.stripeSessionId) {
@@ -173,7 +199,6 @@ export const PaymentService = {
                             ? session.payment_intent
                             : (session.payment_intent?.id ?? null);
                 }
-                // persist any discovered fields back to DB for future quick reads
                 const updates = {};
                 if (paymentUrl && !payment.paymentUrl)
                     updates.paymentUrl = paymentUrl;

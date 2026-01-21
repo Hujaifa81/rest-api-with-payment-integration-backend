@@ -2,16 +2,17 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { corsOptions, rootResponse } from "./shared";
-import notFound from "./app/middlewares/notFound";
-import { globalErrorHandler } from "./app/middlewares";
-import router from "./app/router";
+import notFound from "./app/middlewares/notFound.js";
+import router from "./app/router.js";
 import { raw } from "express";
-import { PaymentController } from "./app/modules/payment/payment.controller";
+import { PaymentController } from "./app/modules/payment/payment.controller.js";
 import passport from "passport";
-import "./config/passport";
+import "./config/passport.js";
 import expressSession from "express-session";
-import ENV from "./config/env";
+import ENV from "./config/env.js";
+import { rootResponse } from "./shared/common/rootResponse.js";
+import { corsOptions } from "./shared/common/corsOptions.js";
+import { globalErrorHandler } from "./app/middlewares/globalErrorHandler.js";
 const app = express();
 // web-hook api
 app.use("/webhook", raw({ type: "application/json" }), (req, res, next) => {

@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from "http-status";
 import { ZodError } from "zod";
-import { Prisma } from "../../../generated/prisma/client";
+import { Prisma } from "../../../generated/prisma/client.js";
 // // Sanitize error to prevent exposing sensitive information in production
 // const sanitizeError = (error: any) => {
 //   // Don't expose Prisma errors in production

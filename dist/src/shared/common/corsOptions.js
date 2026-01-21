@@ -1,4 +1,4 @@
-import ENV from "../../config/env";
+import ENV from "../../config/env.js";
 const whitelist = [...ENV.WHITE_LIST_ORIGIN.split(",")];
 export const corsOptions = {
     origin: function (origin, callback) {

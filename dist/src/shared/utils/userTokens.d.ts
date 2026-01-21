@@ -1,4 +1,4 @@
-import { User } from "../../../generated/prisma/client";
+import { User } from "../../../generated/prisma/client.js";
 export declare const createUserTokens: (user: Partial<User>) => {
     accessToken: string;
     refreshToken: string;

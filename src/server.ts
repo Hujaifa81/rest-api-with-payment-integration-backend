@@ -3,7 +3,7 @@ import { createServer, Server } from "http";
 import ENV from "./config/env.js";
 import app from "./app.js";
 import { prisma } from "./lib/prisma.js";
-import { connectRedis } from "./config/redis.js";
+
 
 async function connectToDB() {
   try {
@@ -30,11 +30,6 @@ class ServerCreator {
     return new Promise<void>((resolve) => {
       this.server.listen(ENV.PORT, async () => {
         await connectToDB();
-        try {
-          await connectRedis();
-        } catch (e: any) {
-          console.warn("Redis connect failed on startup:", e?.message || e);
-        }
         console.log(`Server listening at: http://localhost:${ENV.PORT}`);
         resolve();
       });

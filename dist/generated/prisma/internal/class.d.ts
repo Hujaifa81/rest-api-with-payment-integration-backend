@@ -145,17 +145,6 @@ export interface PrismaClient<in LogOpts extends Prisma.LogLevel = never, in out
         omit: OmitOpts;
     }>;
     /**
-     * `prisma.outboxEvent`: Exposes CRUD operations for the **OutboxEvent** model.
-      * Example usage:
-      * ```ts
-      * // Fetch zero or more OutboxEvents
-      * const outboxEvents = await prisma.outboxEvent.findMany()
-      * ```
-      */
-    get outboxEvent(): Prisma.OutboxEventDelegate<ExtArgs, {
-        omit: OmitOpts;
-    }>;
-    /**
      * `prisma.payment`: Exposes CRUD operations for the **Payment** model.
       * Example usage:
       * ```ts

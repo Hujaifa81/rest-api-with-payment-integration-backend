@@ -1,4 +1,4 @@
-import ServerCreator from "./server";
+import ServerCreator from "./server.js";
 const server = new ServerCreator();
 (async () => {
     try {

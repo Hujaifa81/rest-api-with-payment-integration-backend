@@ -1,9 +1,9 @@
-import { ApiError } from "../../errors";
+import ApiError from "../../errors/ApiError.js";
 import httpStatus from "http-status-codes";
-import { PaymentStatus } from "../../../../generated/prisma/enums";
+import { PaymentStatus } from "../../../../generated/prisma/enums.js";
 import { v4 as uuidv4 } from "uuid";
-import { processOutboxEvent } from "../../../workers/outboxProcessor";
-import { prisma } from "../../../lib/prisma";
+import { prisma } from "../../../lib/prisma.js";
+import { stripe } from "../../../shared/helper/stripe.js";
 const createOrder = async (orderData, token) => {
     const user = await prisma.user.findUnique({ where: { id: token.userId } });
     if (!user) {
@@ -13,18 +13,15 @@ const createOrder = async (orderData, token) => {
         throw new ApiError(httpStatus.BAD_REQUEST, "Order must contain at least one item");
     }
     const createdOrder = await prisma.$transaction(async (tnx) => {
-        // aggregate quantities by productId to handle duplicate product lines
         const aggregated = {};
         for (const it of orderData.items) {
             aggregated[it.productId] = (aggregated[it.productId] || 0) + it.quantity;
         }
         const uniqueProductIds = Object.keys(aggregated);
-        // load current product data for pricing (use cents)
         const products = await tnx.product.findMany({
             where: { id: { in: uniqueProductIds } },
             select: { id: true, priceCents: true, quantity: true, name: true },
         });
-        // build a lookup for  access and detect missing ids
         const productLookup = {};
         for (const p of products)
             productLookup[p.id] = p;
@@ -32,7 +29,6 @@ const createOrder = async (orderData, token) => {
         if (missing.length) {
             throw new ApiError(httpStatus.NOT_FOUND, `Product(s) not found: ${missing.join(", ")}`);
         }
-        // compute total and validate positive prices using the lookup
         let total = 0;
         for (const pid of uniqueProductIds) {
             const prod = productLookup[pid];
@@ -45,11 +41,10 @@ const createOrder = async (orderData, token) => {
             const qty = aggregated[pid] || 0;
             total += prod.priceCents * qty;
         }
-        // atomically decrement stock using conditional updateMany
         for (const pid of uniqueProductIds) {
-            const qty = aggregated[pid] ?? 0; // ensure a number
+            const qty = aggregated[pid] ?? 0;
             if (qty <= 0)
-                continue; // nothing to decrement
+                continue;
             const res = await tnx.product.updateMany({
                 where: { id: pid, quantity: { gte: qty } },
                 data: { quantity: { decrement: qty } },
@@ -58,7 +53,6 @@ const createOrder = async (orderData, token) => {
                 throw new ApiError(httpStatus.BAD_REQUEST, `Insufficient stock for product ${pid}`);
             }
         }
-        // create order with items recording the snapshot price
         const itemsPayload = orderData.items.map((it) => {
             const prod = productLookup[it.productId];
             if (!prod) {
@@ -87,59 +81,23 @@ const createOrder = async (orderData, token) => {
                 transactionId,
             },
         });
-        // create outbox event inside the same transaction so DB state is atomic
-        const outbox = await tnx.outboxEvent.create({
-            data: {
-                topic: "CREATE_STRIPE_SESSION",
-                payload: {
-                    orderId: order.id,
-                    paymentId: payment.id,
-                    customer_email: user?.email || undefined,
-                },
-            },
-        });
-        // return committed order, payment and outbox info from transaction
-        return { order, payment, outbox };
+        return { order, payment };
     });
-    // createdOrder contains { order, payment, outbox }
     const createdOrderTyped = createdOrder;
     const { order, payment } = createdOrderTyped;
-    const outbox = createdOrderTyped.outbox;
-    // (We created the outbox event inside the transaction above.)
-    // We'll let the worker build the `line_items` (it will fetch order/items and product names).
-    // Let the worker process the outbox event. Immediate processing was removed
-    // to keep claim/lease semantics consistent and avoid races.
-    // Attempt inline processing of the outbox so we can return a usable paymentUrl
-    if (outbox) {
-        const inlineClaimId = `inline-${process.pid}-${Date.now()}`;
-        try {
-            await prisma.outboxEvent.update({
-                where: { id: outbox.id },
-                data: { claimedAt: new Date(), claimedBy: inlineClaimId },
-            });
-            await processOutboxEvent({
-                id: outbox.id,
-                topic: outbox.topic,
-                payload: outbox.payload,
-            });
-            const p = await prisma.payment.findUnique({ where: { id: payment.id } });
-            return { paymentUrl: p?.paymentUrl || null, orderId: order.id, paymentId: payment.id };
-        }
-        catch (err) {
-            console.error("Inline outbox processing for createOrder failed, releasing claim and falling back to background worker", err);
-            try {
-                await prisma.outboxEvent.update({
-                    where: { id: outbox.id },
-                    data: { claimedAt: null, claimedBy: null },
-                });
-            }
-            catch (clearErr) {
-                console.error("Failed to clear inline claim after createOrder processing failure", clearErr);
-            }
-            return { paymentUrl: null, orderId: order.id, paymentId: payment.id, queued: true };
-        }
+    try {
+        const sessionOpts = user?.email ? { customerEmail: user.email } : undefined;
+        const sessionRes = await initiatePayment(order.id, payment.id, sessionOpts);
+        return {
+            paymentUrl: sessionRes?.paymentUrl || null,
+            orderId: order.id,
+            paymentId: payment.id,
+        };
     }
-    return { paymentUrl: null, orderId: order.id, paymentId: payment.id };
+    catch (e) {
+        console.error("createOrder: immediate payment initiation failed, returning queued result", e);
+        return { paymentUrl: null, orderId: order.id, paymentId: payment.id, queued: true };
+    }
 };
 const createOrderWithPayLater = async (orderData, token) => {
     const user = await prisma.user.findUnique({ where: { id: token.userId } });
@@ -150,13 +108,11 @@ const createOrderWithPayLater = async (orderData, token) => {
         throw new ApiError(httpStatus.BAD_REQUEST, "Order must contain at least one item");
     }
     const createdOrder = await prisma.$transaction(async (tnx) => {
-        // aggregate quantities by productId to handle duplicate product lines
         const aggregated = {};
         for (const it of orderData.items) {
             aggregated[it.productId] = (aggregated[it.productId] || 0) + it.quantity;
         }
         const uniqueProductIds = Object.keys(aggregated);
-        // load current product data for pricing (use cents)
         const products = await tnx.product.findMany({
             where: { id: { in: uniqueProductIds } },
             select: { id: true, priceCents: true, quantity: true, name: true },
@@ -180,7 +136,6 @@ const createOrderWithPayLater = async (orderData, token) => {
             const qty = aggregated[pid] || 0;
             total += prod.priceCents * qty;
         }
-        // atomically decrement stock using conditional updateMany
         for (const pid of uniqueProductIds) {
             const qty = aggregated[pid] ?? 0;
             if (qty <= 0)
@@ -220,7 +175,6 @@ const createOrderWithPayLater = async (orderData, token) => {
     return { orderId: order.id, paymentId: payment.id, payLater: true };
 };
 const initiatePayment = async (orderId, paymentId, opts) => {
-    // outbox-first initiation: enqueue CREATE_STRIPE_SESSION so worker creates the session
     const payment = await prisma.payment.findUnique({ where: { id: paymentId } });
     if (!payment)
         throw new ApiError(httpStatus.NOT_FOUND, "Payment not found");
@@ -228,58 +182,131 @@ const initiatePayment = async (orderId, paymentId, opts) => {
         throw new ApiError(httpStatus.BAD_REQUEST, "Payment does not belong to order");
     if (payment.status !== "UNPAID")
         throw new ApiError(httpStatus.BAD_REQUEST, "Payment is not in unpaid state");
-    // If Stripe session or intent already exists, return it
     if (payment.stripeSessionId || payment.paymentIntent) {
         return {
             sessionId: payment.stripeSessionId || null,
-            paymentIntent: payment.paymentIntent || null,
+            paymentId: payment.id || null,
         };
     }
-    // Outbox-first inline processing: create outbox event with an inline claim so workers skip it,
-    // then process it synchronously and return paymentUrl when successful.
-    const inlineClaimId = `inline-${process.pid}-${Date.now()}`;
-    const payload = {
-        orderId,
-        paymentId,
-        ...(opts?.customerEmail ? { customer_email: opts.customerEmail } : {}),
-    };
-    const outbox = await prisma.outboxEvent.create({
-        data: {
-            topic: "CREATE_STRIPE_SESSION",
-            payload,
-            claimedAt: new Date(),
-            claimedBy: inlineClaimId,
-        },
-    });
+    let line_items = [];
     try {
-        // Call the same processor used by the worker for consistent behavior
-        await processOutboxEvent({
-            id: outbox.id,
-            topic: outbox.topic,
-            payload: outbox.payload,
-        });
-        // Fetch payment and return persisted paymentUrl/sessionId
-        const p = await prisma.payment.findUnique({ where: { id: paymentId } });
-        return {
-            paymentUrl: p?.paymentUrl || null,
-            paymentId: p?.id || null,
-            orderId: p?.orderId || null,
-        };
+        const order = await prisma.order.findUnique({ where: { id: orderId }, include: { items: true } });
+        if (!order)
+            throw new ApiError(httpStatus.NOT_FOUND, "Order not found");
+        const productIds = order.items.map((it) => it.productId);
+        const products = await prisma.product.findMany({ where: { id: { in: productIds } }, select: { id: true, name: true } });
+        const nameLookup = {};
+        for (const p of products)
+            nameLookup[p.id] = p.name || "Product";
+        line_items = order.items.map((it) => ({
+            price_data: {
+                currency: process.env.STRIPE_CURRENCY || "usd",
+                product_data: { name: nameLookup[it.productId] || "Product" },
+                unit_amount: it.priceCents,
+            },
+            quantity: it.quantity,
+        }));
     }
-    catch (err) {
-        console.error("Inline outbox processing failed, releasing claim and falling back to background worker", err);
-        // clear claim so background workers can pick it up
+    catch (e) {
+        console.error("Failed to build line_items for synchronous payment", e);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Failed to build payment items");
+    }
+    let session;
+    let createdPI = null;
+    try {
         try {
-            await prisma.outboxEvent.update({
-                where: { id: outbox.id },
-                data: { claimedAt: null, claimedBy: null },
+            createdPI = await stripe.paymentIntents.create({
+                amount: (await prisma.order.findUnique({ where: { id: orderId } })).amountCents,
+                currency: process.env.STRIPE_CURRENCY || "usd",
+                metadata: { orderId, paymentId },
+                automatic_payment_methods: { enabled: true },
             });
+            if (createdPI && createdPI.id) {
+                try {
+                    await prisma.payment.update({ where: { id: paymentId }, data: { paymentIntent: createdPI.id } });
+                }
+                catch (e) {
+                    console.error("Failed to persist created PaymentIntent to DB", e);
+                }
+            }
+            const sessionParams = {
+                payment_method_types: ["card"],
+                mode: "payment",
+                ...(opts?.customerEmail ? { customer_email: opts.customerEmail } : {}),
+                line_items,
+                metadata: { orderId, paymentId },
+                success_url: `${process.env.FRONTEND_URL || "http://localhost:3000"}/payment/success`,
+                cancel_url: `${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard/my-orders`,
+                payment_intent: createdPI?.id,
+            };
+            session = await stripe.checkout.sessions.create(sessionParams);
         }
-        catch (clearErr) {
-            console.error("Failed to clear inline claim after processing failure", clearErr);
+        catch (piErr) {
+            console.error("Creating PaymentIntent failed, falling back to session-first flow", piErr);
+            const sessionParams = {
+                payment_method_types: ["card"],
+                mode: "payment",
+                ...(opts?.customerEmail ? { customer_email: opts.customerEmail } : {}),
+                line_items,
+                metadata: { orderId, paymentId },
+                success_url: `${process.env.FRONTEND_URL || "http://localhost:3000"}/payment/success`,
+                cancel_url: `${process.env.FRONTEND_URL || "http://localhost:3000"}/dashboard/my-orders`,
+            };
+            sessionParams.payment_intent_data = { metadata: { orderId, paymentId } };
+            sessionParams.expand = ["payment_intent"];
+            session = await stripe.checkout.sessions.create(sessionParams);
         }
-        return { queued: true };
     }
+    catch (e) {
+        console.error("Failed to create Stripe session", e);
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Failed to create Stripe session");
+    }
+    let retrievedSession = session;
+    const maxRetries = 5;
+    const retryDelayMs = 500;
+    if (!session.payment_intent) {
+        for (let i = 0; i < maxRetries; i++) {
+            try {
+                await new Promise((res) => setTimeout(res, retryDelayMs));
+                retrievedSession = await stripe.checkout.sessions.retrieve(session.id, { expand: ["payment_intent"] });
+                if (retrievedSession && retrievedSession.payment_intent)
+                    break;
+            }
+            catch (err) {
+                console.error("Error retrieving session retry", i + 1, err);
+            }
+        }
+    }
+    const updates = {};
+    if (retrievedSession && retrievedSession.payment_intent) {
+        updates.paymentIntent =
+            typeof retrievedSession.payment_intent === "string"
+                ? retrievedSession.payment_intent
+                : (retrievedSession.payment_intent?.id ?? null);
+    }
+    if (session.id)
+        updates.stripeSessionId = session.id;
+    if (session.url)
+        updates.paymentUrl = session.url;
+    try {
+        if (Object.keys(updates).length) {
+            await prisma.payment.update({ where: { id: paymentId }, data: updates });
+        }
+    }
+    catch (dbErr) {
+        console.error("Failed to persist Stripe session to DB", dbErr);
+        if (updates.paymentIntent) {
+            try {
+                await stripe.paymentIntents.cancel(updates.paymentIntent);
+                console.info("Cancelled paymentIntent due to DB persist failure", updates.paymentIntent);
+            }
+            catch (cancelErr) {
+                console.error("Failed to cancel paymentIntent after DB persist failure", cancelErr);
+            }
+        }
+        throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, "Failed to persist payment info");
+    }
+    return { paymentUrl: updates.paymentUrl || null, sessionId: updates.stripeSessionId || null, paymentIntent: updates.paymentIntent || null };
 };
 const listOrders = async (token) => {
     const user = await prisma.user.findUnique({ where: { id: token.userId } });

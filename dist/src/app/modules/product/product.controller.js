@@ -1,5 +1,5 @@
-import { catchAsync, sendResponse } from "../../../shared";
-import { ProductService } from "./product.service";
+import { catchAsync, sendResponse } from "../../../shared/index.js";
+import { ProductService } from "./product.service.js";
 import httpStatus from "http-status-codes";
 const createProduct = catchAsync(async (req, res, next) => {
     const productData = req.body;

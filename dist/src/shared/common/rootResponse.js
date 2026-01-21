@@ -1,5 +1,5 @@
-import ENV from "../../config/env";
-import { formatDuration } from "../utils";
+import ENV from "../../config/env.js";
+import { formatDuration } from "../utils/index.js";
 export const rootResponse = (req, res) => {
     res.send({
         message: "Rest API server is running..",

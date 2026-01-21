@@ -35,11 +35,6 @@ export type Order = Prisma.OrderModel;
  */
 export type OrderItem = Prisma.OrderItemModel;
 /**
- * Model OutboxEvent
- *
- */
-export type OutboxEvent = Prisma.OutboxEventModel;
-/**
  * Model Payment
  *
  */

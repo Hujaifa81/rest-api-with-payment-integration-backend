@@ -30,7 +30,6 @@ declare const ENV: {
     REDIS: {
         REDIS_URL: string;
     };
-    START_OUTBOX_WORKER: string;
     BCRYPT_SALT_ROUND: number;
     FRONTEND_URL: string;
 };

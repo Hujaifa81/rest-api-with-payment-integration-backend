@@ -1,9 +1,9 @@
-import { IJWTPayload } from "../../../interface/declare";
-import { PaymentStatus } from "../../../../generated/prisma/enums";
-import { CreateOrderData } from "./order.interface";
+import { IJWTPayload } from "../../../interface/declare/index.js";
+import { PaymentStatus } from "../../../../generated/prisma/enums.js";
+import { CreateOrderData } from "./order.interface.js";
 export declare const OrderService: {
     createOrder: (orderData: CreateOrderData, token: IJWTPayload) => Promise<{
-        paymentUrl: string | null;
+        paymentUrl: any;
         orderId: string;
         paymentId: string;
         queued?: never;
@@ -23,25 +23,14 @@ export declare const OrderService: {
         viaOutbox?: boolean;
     }) => Promise<{
         sessionId: string | null;
-        paymentIntent: string | null;
-        paymentUrl?: never;
-        paymentId?: never;
-        orderId?: never;
-        queued?: never;
-    } | {
-        paymentUrl: string | null;
         paymentId: string | null;
-        orderId: string | null;
-        sessionId?: never;
-        paymentIntent?: never;
-        queued?: never;
-    } | {
-        queued: boolean;
-        sessionId?: never;
-        paymentIntent?: never;
         paymentUrl?: never;
+        paymentIntent?: never;
+    } | {
+        paymentUrl: any;
+        sessionId: any;
+        paymentIntent: any;
         paymentId?: never;
-        orderId?: never;
     }>;
     listOrders: (token: IJWTPayload) => Promise<({
         items: {

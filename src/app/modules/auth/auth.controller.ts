@@ -13,6 +13,7 @@ import { AuthService } from "./auth.service.js";
 import ENV from "../../../config/env.js";
 import { IJWTPayload } from "../../../interface/declare/index.js";
 
+
 const credentialsLogin = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   passport.authenticate("local", async (err: any, user: any, info: any) => {
     if (err) {
@@ -25,7 +26,6 @@ const credentialsLogin = catchAsync(async (req: Request, res: Response, next: Ne
 
     const userTokens = await createUserTokens(user);
 
-    // `user` is a plain object from Prisma; no `toObject()` method.
     const { password: pass, ...rest } = user as any;
 
     setAuthCookie(res, userTokens);
@@ -117,45 +117,9 @@ const logout = catchAsync(async (req: Request, res: Response, next: NextFunction
   });
 });
 
-const resetPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const decodedToken = req.user;
 
-  await AuthService.resetPassword(req.body, decodedToken as IJWTPayload);
 
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Password Changed Successfully",
-    data: null,
-  });
-});
 
-const forgotPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const { email } = req.body;
-
-  await AuthService.forgotPassword(email);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Email Sent Successfully",
-    data: null,
-  });
-});
-
-const setPassword = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-  const decodedToken = req.user as IJWTPayload;
-  const { password } = req.body;
-
-  await AuthService.setPassword(decodedToken.userId, password);
-
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Password Changed Successfully",
-    data: null,
-  });
-});
 
 export const AuthController = {
   credentialsLogin,
@@ -163,7 +127,4 @@ export const AuthController = {
   getNewAccessToken,
   changePassword,
   logout,
-  resetPassword,
-  forgotPassword,
-  setPassword,
 };

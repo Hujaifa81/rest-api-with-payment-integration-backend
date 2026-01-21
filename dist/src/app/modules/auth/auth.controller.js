@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import passport from "passport";
-import ENV from "../../../config/env";
-import { catchAsync, createUserTokens, sendResponse, setAuthCookie } from "../../../shared";
-import { ApiError } from "../../errors";
-import { AuthService } from "./auth.service";
 import httpStatus from "http-status-codes";
+import ApiError from "../../errors/ApiError.js";
+import { catchAsync } from "../../../shared/utils/catchAsync.js";
+import { createUserTokens } from "../../../shared/utils/userTokens.js";
+import { setAuthCookie } from "../../../shared/utils/setCookie.js";
+import { sendResponse } from "../../../shared/utils/sendResponse.js";
+import { AuthService } from "./auth.service.js";
+import ENV from "../../../config/env.js";
 const credentialsLogin = catchAsync(async (req, res, next) => {
     passport.authenticate("local", async (err, user, info) => {
         if (err) {
@@ -15,7 +18,6 @@ const credentialsLogin = catchAsync(async (req, res, next) => {
             return next(new ApiError(httpStatus.UNAUTHORIZED, info.message));
         }
         const userTokens = await createUserTokens(user);
-        // `user` is a plain object from Prisma; no `toObject()` method.
         const { password: pass, ...rest } = user;
         setAuthCookie(res, userTokens);
         sendResponse(res, {
@@ -85,45 +87,11 @@ const logout = catchAsync(async (req, res, next) => {
         data: null,
     });
 });
-const resetPassword = catchAsync(async (req, res, next) => {
-    const decodedToken = req.user;
-    await AuthService.resetPassword(req.body, decodedToken);
-    sendResponse(res, {
-        success: true,
-        statusCode: httpStatus.OK,
-        message: "Password Changed Successfully",
-        data: null,
-    });
-});
-const forgotPassword = catchAsync(async (req, res, next) => {
-    const { email } = req.body;
-    await AuthService.forgotPassword(email);
-    sendResponse(res, {
-        success: true,
-        statusCode: httpStatus.OK,
-        message: "Email Sent Successfully",
-        data: null,
-    });
-});
-const setPassword = catchAsync(async (req, res, next) => {
-    const decodedToken = req.user;
-    const { password } = req.body;
-    await AuthService.setPassword(decodedToken.userId, password);
-    sendResponse(res, {
-        success: true,
-        statusCode: httpStatus.OK,
-        message: "Password Changed Successfully",
-        data: null,
-    });
-});
 export const AuthController = {
     credentialsLogin,
     googleCallbackController,
     getNewAccessToken,
     changePassword,
     logout,
-    resetPassword,
-    forgotPassword,
-    setPassword,
 };
 //# sourceMappingURL=auth.controller.js.map

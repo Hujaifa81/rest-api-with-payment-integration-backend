@@ -29,7 +29,6 @@ export declare const ModelName: {
     readonly AuthProvider: "AuthProvider";
     readonly Order: "Order";
     readonly OrderItem: "OrderItem";
-    readonly OutboxEvent: "OutboxEvent";
     readonly Payment: "Payment";
     readonly Product: "Product";
     readonly User: "User";
@@ -67,23 +66,6 @@ export declare const OrderItemScalarFieldEnum: {
     readonly priceCents: "priceCents";
 };
 export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum];
-export declare const OutboxEventScalarFieldEnum: {
-    readonly id: "id";
-    readonly topic: "topic";
-    readonly payload: "payload";
-    readonly processed: "processed";
-    readonly attempts: "attempts";
-    readonly error: "error";
-    readonly deadLetter: "deadLetter";
-    readonly deadLetterAt: "deadLetterAt";
-    readonly deadLetterReason: "deadLetterReason";
-    readonly deadLetterResolvedAt: "deadLetterResolvedAt";
-    readonly claimedAt: "claimedAt";
-    readonly claimedBy: "claimedBy";
-    readonly createdAt: "createdAt";
-    readonly processedAt: "processedAt";
-};
-export type OutboxEventScalarFieldEnum = (typeof OutboxEventScalarFieldEnum)[keyof typeof OutboxEventScalarFieldEnum];
 export declare const PaymentScalarFieldEnum: {
     readonly id: "id";
     readonly orderId: "orderId";
@@ -115,7 +97,6 @@ export declare const UserScalarFieldEnum: {
     readonly email: "email";
     readonly password: "password";
     readonly name: "name";
-    readonly isVerified: "isVerified";
     readonly role: "role";
     readonly isDeleted: "isDeleted";
     readonly createdAt: "createdAt";
@@ -127,21 +108,11 @@ export declare const SortOrder: {
     readonly desc: "desc";
 };
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
-export declare const JsonNullValueInput: {
-    readonly JsonNull: "JsonNull";
-};
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput];
 export declare const QueryMode: {
     readonly default: "default";
     readonly insensitive: "insensitive";
 };
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
-export declare const JsonNullValueFilter: {
-    readonly DbNull: "DbNull";
-    readonly JsonNull: "JsonNull";
-    readonly AnyNull: "AnyNull";
-};
-export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter];
 export declare const NullsOrder: {
     readonly first: "first";
     readonly last: "last";

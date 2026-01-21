@@ -1,6 +1,7 @@
-import { catchAsync, sendResponse } from "../../../shared";
 import httpStatus from "http-status";
-import { UserService } from "./user.service";
+import { catchAsync } from "../../../shared/utils/catchAsync.js";
+import { sendResponse } from "../../../shared/utils/sendResponse.js";
+import { UserService } from "./user.service.js";
 const createUser = catchAsync(async (req, res, next) => {
     const result = await UserService.createUser(req.body);
     sendResponse(res, {
@@ -11,7 +12,7 @@ const createUser = catchAsync(async (req, res, next) => {
     });
 });
 const getMe = catchAsync(async (req, res, next) => {
-    const userId = req.user?.userId;
+    const userId = (req?.user).userId;
     const result = await UserService.getMe(userId);
     sendResponse(res, {
         statusCode: httpStatus.OK,

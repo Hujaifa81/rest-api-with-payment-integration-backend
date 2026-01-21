@@ -1,7 +1,6 @@
 export type * from './models/AuthProvider.js';
 export type * from './models/Order.js';
 export type * from './models/OrderItem.js';
-export type * from './models/OutboxEvent.js';
 export type * from './models/Payment.js';
 export type * from './models/Product.js';
 export type * from './models/User.js';

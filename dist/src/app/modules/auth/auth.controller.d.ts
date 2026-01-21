@@ -5,8 +5,5 @@ export declare const AuthController: {
     getNewAccessToken: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     changePassword: (req: Request, res: Response, next: NextFunction) => Promise<void>;
     logout: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-    resetPassword: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-    forgotPassword: (req: Request, res: Response, next: NextFunction) => Promise<void>;
-    setPassword: (req: Request, res: Response, next: NextFunction) => Promise<void>;
 };
 //# sourceMappingURL=auth.controller.d.ts.map

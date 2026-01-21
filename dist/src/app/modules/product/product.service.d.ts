@@ -1,8 +1,8 @@
-import { Prisma } from "../../../../generated/prisma/client";
+import { Prisma } from "../../../../generated/prisma/client.js";
 export declare const ProductService: {
     createProduct: (productData: Prisma.ProductCreateInput) => Promise<{
-        name: string;
         id: string;
+        name: string;
         createdAt: Date;
         updatedAt: Date;
         description: string | null;
@@ -10,8 +10,8 @@ export declare const ProductService: {
         quantity: number;
     }>;
     getAllProducts: () => Promise<{
-        name: string;
         id: string;
+        name: string;
         createdAt: Date;
         updatedAt: Date;
         description: string | null;
@@ -19,8 +19,8 @@ export declare const ProductService: {
         quantity: number;
     }[]>;
     getProductById: (productId: string) => Promise<{
-        name: string;
         id: string;
+        name: string;
         createdAt: Date;
         updatedAt: Date;
         description: string | null;
@@ -28,8 +28,8 @@ export declare const ProductService: {
         quantity: number;
     }>;
     updateProduct: (productId: string, updateData: Prisma.ProductUpdateInput) => Promise<{
-        name: string;
         id: string;
+        name: string;
         createdAt: Date;
         updatedAt: Date;
         description: string | null;

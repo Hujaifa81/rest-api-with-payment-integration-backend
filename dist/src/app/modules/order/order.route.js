@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { checkAuth } from "../../middlewares";
-import { Role } from "../../../../generated/prisma/enums";
-import { OrderController } from "./order.controller";
-import validateRequest from "../../middlewares/validateRequest";
-import { createOrderZodSchema } from "./order.validation";
+import { checkAuth } from "../../middlewares/checkAuth.js";
+import { Role } from "../../../../generated/prisma/enums.js";
+import { OrderController } from "./order.controller.js";
+import validateRequest from "../../middlewares/validateRequest.js";
+import { createOrderZodSchema } from "./order.validation.js";
 const router = Router();
 // create order (immediate payment via outbox worker)
 router.post("/", checkAuth(...Object.values(Role)), validateRequest(createOrderZodSchema), OrderController.createOrder);

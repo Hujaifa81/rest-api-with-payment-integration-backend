@@ -70,7 +70,6 @@ export const ModelName = {
     AuthProvider: 'AuthProvider',
     Order: 'Order',
     OrderItem: 'OrderItem',
-    OutboxEvent: 'OutboxEvent',
     Payment: 'Payment',
     Product: 'Product',
     User: 'User'
@@ -106,22 +105,6 @@ export const OrderItemScalarFieldEnum = {
     quantity: 'quantity',
     priceCents: 'priceCents'
 };
-export const OutboxEventScalarFieldEnum = {
-    id: 'id',
-    topic: 'topic',
-    payload: 'payload',
-    processed: 'processed',
-    attempts: 'attempts',
-    error: 'error',
-    deadLetter: 'deadLetter',
-    deadLetterAt: 'deadLetterAt',
-    deadLetterReason: 'deadLetterReason',
-    deadLetterResolvedAt: 'deadLetterResolvedAt',
-    claimedAt: 'claimedAt',
-    claimedBy: 'claimedBy',
-    createdAt: 'createdAt',
-    processedAt: 'processedAt'
-};
 export const PaymentScalarFieldEnum = {
     id: 'id',
     orderId: 'orderId',
@@ -151,7 +134,6 @@ export const UserScalarFieldEnum = {
     email: 'email',
     password: 'password',
     name: 'name',
-    isVerified: 'isVerified',
     role: 'role',
     isDeleted: 'isDeleted',
     createdAt: 'createdAt',
@@ -161,17 +143,9 @@ export const SortOrder = {
     asc: 'asc',
     desc: 'desc'
 };
-export const JsonNullValueInput = {
-    JsonNull: JsonNull
-};
 export const QueryMode = {
     default: 'default',
     insensitive: 'insensitive'
-};
-export const JsonNullValueFilter = {
-    DbNull: DbNull,
-    JsonNull: JsonNull,
-    AnyNull: AnyNull
 };
 export const NullsOrder = {
     first: 'first',
