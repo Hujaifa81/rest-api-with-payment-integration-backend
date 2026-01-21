@@ -389,7 +389,6 @@ const listOrders = async (token: IJWTPayload) => {
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
   }
-
   const orders = await prisma.order.findMany({
     where: { userId: user.id },
     include: { items: true },
