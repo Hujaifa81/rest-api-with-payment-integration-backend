@@ -22,7 +22,6 @@ const createOrder = async (orderData: CreateOrderData, token: IJWTPayload) => {
   }
 
   const createdOrder = await prisma.$transaction(async (tnx) => {
-
     const aggregated: Record<string, number> = {};
     for (const it of orderData.items) {
       aggregated[it.productId] = (aggregated[it.productId] || 0) + it.quantity;

@@ -8,7 +8,7 @@ const env = envalid.cleanEnv(process.env, {
   NODE_ENV: envalid.str({ default: "development" }),
   PORT: envalid.num({ default: 5000 }),
   DATABASE_URL: envalid.str(),
-  WHITE_LIST_ORIGIN: envalid.str({ default: "*" }),
+  WHITE_LIST_ORIGIN: envalid.str(),
   JWT_ACCESS_SECRET: envalid.str(),
   JWT_ACCESS_EXPIRES: envalid.str(),
   JWT_REFRESH_SECRET: envalid.str(),

@@ -2,9 +2,7 @@
 
 Comprehensive Node.js + TypeScript REST API with Prisma (Postgres) and Stripe Checkout integration.
 This project implements modular features for authentication, products, orders, and payments with production-ready concerns (webhooks, migrations, idempotency and deploy scripts).
-
-[Live](https://rest-api-with-payment-integration-backend.onrender.com)  
-
+[Live Link](https://rest-api-with-payment-integration-backend.onrender.com) 
 Note: all API endpoints are prefixed with `/api/v1/`. When calling the API use `{{baseUrl}}/api/v1/<route>`.
 
 ## Table of Contents
@@ -13,15 +11,13 @@ Note: all API endpoints are prefixed with `/api/v1/`. When calling the API use `
 - [Full Project Overview](#full-project-overview)
 - [Payment Flow](#payment-flow)
 - [Middlewares](#middlewares)
+ - [Error Handling](#error-handling)
  - [CORS](#cors-cross-origin-resource-sharing)
 - [API: selected endpoints & examples](#api-selected-endpoints--examples)
 - [How Authentication Works (for Postman)](#how-authentication-works-for-postman)
 - [Database & Migrations](#database--migrations)
 - [Postman collection (export)](#postman-collection-export)
 - [Scripts & Dev tooling](#scripts--dev-tooling)
-- [Troubleshooting & common issues](#troubleshooting--common-issues)
-
-
 
 ---
 
@@ -158,10 +154,31 @@ This project centralizes request-level concerns in `src/app/middlewares`. Each m
 - `src/app/middlewares/validateRequest.ts`: Zod-based request body validator; parses `req.body.data` when present and replaces `req.body` with the parsed payload.
 - `src/app/middlewares/index.ts`: middleware barrel exporting commonly used middleware for easy imports.
 
+
 Usage notes:
 - Apply `validateRequest` per-route where request payloads must be validated.
 - Protect routes with `checkAuth(...)` (pass roles as needed).
 - Mount `notFound` after routes and `globalErrorHandler` as the last middleware on the app.
+
+---
+
+## Error Handling
+
+This project centralizes error handling in `src/app/middlewares/globalErrorHandler.ts`. Key points:
+
+- `globalErrorHandler` normalizes errors from validation (Zod), Prisma client errors and application-level errors so API responses remain consistent.
+- Use the `ApiError` class for application errors (`src/app/errors/ApiError.ts`):
+
+```ts
+import ApiError from './src/app/errors/ApiError';
+
+// inside a service or controller
+if (!user) throw new ApiError(404, 'User not found');
+```
+
+- `globalErrorHandler` will read `ApiError.statusCode` and return JSON like `{ success: false, message, error }` with the proper HTTP status.
+
+---
 
 
 ## API: selected endpoints & examples
@@ -188,7 +205,6 @@ Orders
 Payments
 - GET /api/v1/payment/:paymentId/status — read payment status
 
-
 ---
 
 ## How Authentication Works (for Postman)
@@ -206,7 +222,6 @@ Payments
 - Migrations are under `prisma/migrations`. Workflow:
    - Dev: `npx prisma migrate dev --name <desc>`
    - Prod: `npx prisma migrate deploy`
-- If you add fields to Prisma models, always create and commit a migration and run `prisma migrate deploy` on the target DB.
 
 ---
 
@@ -217,9 +232,7 @@ Payments
    - Collection-level Authorization is set to **Bearer** with token value `{{accessToken}}` (so requests use that token if set).
    - Requests use variable `{{baseUrl}}` for the API base URL.
    - The collection contains saved example responses and request bodies for many endpoints.
-   - The exported collection DOES NOT include your environment values or cookie jar — share a redacted environment or instruct reviewers to run the login request.
 
-If you want, I can generate a redacted Postman environment JSON (placeholders for `baseUrl` and `accessToken`) and add a small `docs/POSTMAN_README.md` describing how to import and use the collection.
 
 ---
 
@@ -233,28 +246,4 @@ If you want, I can generate a redacted Postman environment JSON (placeholders fo
 
 ---
 
-## CORS (Cross-Origin Resource Sharing)
-
-This server handles CORS server-side. The API expects requests from your frontend origin; set `FRONTEND_URL` in `.env` to the frontend origin (for example `http://localhost:3000` or your deployed frontend URL).
-- Server-side CORS configuration (example):
-
-```ts
-import cors from 'cors';
-
-app.use(
-   cors({
-      origin: process.env.FRONTEND_URL,
-      credentials: true, // allow cookies to be sent
-   })
-);
-```
-
-- Important notes:
-   - Use `credentials: true` so HttpOnly cookies (access/refresh tokens) are sent by browsers.
-   - When `credentials: true` you must set an explicit `origin` (cannot use `*`).
-   - For local testing include `http://localhost:3000` (or your frontend dev port) in `FRONTEND_URL`.
-   - Postman does not enforce CORS — browser requests are subject to CORS restrictions.
-   - Ensure cookie options (`secure`, `sameSite`) match your deployment (e.g., `secure: true` in production).
-
-
-Maintainer: Md Abu Hujaifa — update the Live URL before sharing.
+Maintainer: Md Abu Hujaifa.
