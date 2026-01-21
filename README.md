@@ -2,7 +2,9 @@
 
 Comprehensive Node.js + TypeScript REST API with Prisma (Postgres) and Stripe Checkout integration.
 This project implements modular features for authentication, products, orders, and payments with production-ready concerns (webhooks, migrations, idempotency and deploy scripts).
+
 [Live Link](https://rest-api-with-payment-integration-backend.onrender.com) 
+
 Note: all API endpoints are prefixed with `/api/v1/`. When calling the API use `{{baseUrl}}/api/v1/<route>`.
 
 ## Table of Contents
