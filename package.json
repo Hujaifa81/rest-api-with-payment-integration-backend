@@ -12,6 +12,7 @@
     "dev": "npx tsx watch ./src/index.ts",
     "dev:all": "npm run dev",
     "start": "node ./dist/src/index.js",
+    "start:prod": "bash ./render-start.sh",
     "lint": "npx eslint ./src",
     "lint:fix": "npx eslint ./src --fix",
     "format": "prettier --write .",
