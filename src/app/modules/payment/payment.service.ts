@@ -103,6 +103,36 @@ export const PaymentService = {
       return;
     }
 
+    // PaymentIntent succeeded (covers cases where Checkout session may not carry metadata)
+    if (event.type === "payment_intent.succeeded") {
+      const pi = event.data.object;
+      const paymentIntentId = pi?.id;
+      let payment = null;
+      if (paymentIntentId) {
+        payment = await prisma.payment.findFirst({ where: { paymentIntent: paymentIntentId } });
+      }
+      if (!payment && pi?.metadata?.paymentId) {
+        payment = await prisma.payment.findUnique({ where: { id: pi.metadata.paymentId } });
+      }
+      if (!payment) return;
+
+      try {
+        const updated = await prisma.$transaction(async (tx) => {
+          const u = await tx.payment.updateMany({
+            where: { id: payment!.id, stripeEventId: null },
+            data: { status: "PAID", stripeEventId: event.id },
+          });
+          if (u.count === 0) return 0;
+          await tx.order.update({ where: { id: payment!.orderId }, data: { status: "PAID" } });
+          return 1;
+        });
+        if (updated > 0) console.info("Processed payment_intent.succeeded and marked PAID for", payment.id);
+      } catch (e) {
+        console.error("Failed to process payment_intent.succeeded", e);
+      }
+      return;
+    }
+
     // Checkout session expired -> mark failed/canceled
     if (event.type === "checkout.session.expired") {
       const session = event.data.object;
