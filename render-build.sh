@@ -4,7 +4,6 @@ set -o errexit
 # Install dependencies including devDependencies so TypeScript types are available
 npm ci --include=dev
 
-npm run worker:prod
 
 # Generate Prisma client before build
 npm run db:generate

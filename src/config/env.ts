@@ -21,7 +21,6 @@ const env = envalid.cleanEnv(process.env, {
   STRIPE_SECRET_KEY: envalid.str(),
   STRIPE_CURRENCY: envalid.str({ default: "usd" }),
   STRIPE_WEBHOOK_SECRET: envalid.str(),
-  START_OUTBOX_WORKER: envalid.str(),
   EXPRESS_SESSION_SECRET: envalid.str(),
   SMTP_HOST: envalid.str(),
   SMTP_PORT: envalid.num(),
@@ -63,7 +62,6 @@ const ENV = {
   REDIS: {
     REDIS_URL: env.REDIS_URL,
   },
-  START_OUTBOX_WORKER: env.START_OUTBOX_WORKER,
   BCRYPT_SALT_ROUND: env.BCRYPT_SALT_ROUNDS,
   FRONTEND_URL: env.FRONTEND_URL,
 };
