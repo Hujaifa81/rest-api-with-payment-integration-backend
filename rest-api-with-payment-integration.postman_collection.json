@@ -1,0 +1,1829 @@
+{
+  "info": {
+    "_postman_id": "548df2d8-0094-4877-b441-df152a075e76",
+    "name": "rest-api-with-payment-integration",
+    "description": "**Collection Overview**\n\n- **Purpose:** Collection documents and exercises the REST API for order, payment, product, and auth; useful for manual testing and reviewer sign-off.\n    \n- **Included Folders:** Auth, Order, Payment, Product, User.\n    \n- **Auth Modes:** Cookie-first (HttpOnly cookie set by `POST /auth/login`) and optional Bearer fallback (`Authorization: Bearer {{accessToken}}`).\n    \n\n**Quick Start**\n\n- **Step 1:** Import collection into Postman and create an environment with `baseUrl` (e.g., `http://localhost:5000/api/v1`) and `accessToken`.\n    \n- **Step 2:** Run `POST {{baseUrl}/auth/login` (Auth → Login). Postman stores cookies.\n    \n- **Step 3:** Run Orders/Payments requests; collection-level auth uses `{{accessToken}}` or cookies automatically.\n    \n\n**Key Endpoints (examples)**\n\n- **Auth:** `POST /auth/login`, `POST /auth/register`, refresh/logout flows.\n    \n- **Orders:** POST /orders (pay now), `POST /orders/pay-later`, `GET /orders` (list).\n    \n- **Payments:** GET /payments/:paymentId/status\n    \n- **Products / Users:** CRUD and listing endpoints used in example flows.\n    \n\n**Variables & Scripts**\n\n- **Env variables:** `baseUrl`, `accessToken` (used by collection auth).\n    \n\n**Examples & Responses**\n\n- **Saved examples:** createOrder request/response, createOrderWithPayLater,getPaymentStatus and more. Each request includes an Example response for reviewers.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "33967616"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"abuhojaifa123@gmail.com\",\r\n    \"password\":\"123456@aA\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "login",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\":\"abuhojaifa123@gmail.com\",\r\n    \"password\":\"123456@aA\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 09:05:31 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "611"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c15a676ffdd0645-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"4af-161vBa/cvCDiTgM3pbv39UlX2HE\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "3b08895f-097d-4106"
+                },
+                {
+                  "key": "Set-Cookie",
+                  "value": "accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmOTA4NzgyNi0wNDM2LTQ1MTktYjViYy0wMmY4MzZlZWYyZTQiLCJlbWFpbCI6ImFidWhvamFpZmExMjNAZ21haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3Njg5ODYzMzEsImV4cCI6MTc2OTU5MTEzMX0.LvPnP-PWtKf1RRd06ur5qHMyFwJ1bV-T48Q-HQcbiH8; Path=/; HttpOnly; Secure; SameSite=None"
+                },
+                {
+                  "key": "Set-Cookie",
+                  "value": "refreshToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmOTA4NzgyNi0wNDM2LTQ1MTktYjViYy0wMmY4MzZlZWYyZTQiLCJlbWFpbCI6ImFidWhvamFpZmExMjNAZ21haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3Njg5ODYzMzEsImV4cCI6MTc3MTU3ODMzMX0.zFMn_cbflILKpFnPqkJlODnGfOEs5030LDh1r01JWW8; Path=/; HttpOnly; Secure; SameSite=None"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"success\": true,\n    \"message\": \"User Logged In Successfully\",\n    \"data\": {\n        \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmOTA4NzgyNi0wNDM2LTQ1MTktYjViYy0wMmY4MzZlZWYyZTQiLCJlbWFpbCI6ImFidWhvamFpZmExMjNAZ21haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3Njg5ODYzMzEsImV4cCI6MTc2OTU5MTEzMX0.LvPnP-PWtKf1RRd06ur5qHMyFwJ1bV-T48Q-HQcbiH8\",\n        \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmOTA4NzgyNi0wNDM2LTQ1MTktYjViYy0wMmY4MzZlZWYyZTQiLCJlbWFpbCI6ImFidWhvamFpZmExMjNAZ21haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3Njg5ODYzMzEsImV4cCI6MTc3MTU3ODMzMX0.zFMn_cbflILKpFnPqkJlODnGfOEs5030LDh1r01JWW8\",\n        \"user\": {\n            \"id\": \"f9087826-0436-4519-b5bc-02f836eef2e4\",\n            \"email\": \"abuhojaifa123@gmail.com\",\n            \"name\": \"Hujaifa\",\n            \"role\": \"USER\",\n            \"isDeleted\": false,\n            \"createdAt\": \"2026-01-21T07:56:40.090Z\",\n            \"updatedAt\": \"2026-01-21T07:56:40.090Z\",\n            \"authProviders\": [\n                {\n                    \"id\": \"43f39505-0ce4-4ef3-be3f-5839330a4db9\",\n                    \"provider\": \"CREDENTIALS\",\n                    \"providerId\": \"abuhojaifa123@gmail.com\",\n                    \"userId\": \"f9087826-0436-4519-b5bc-02f836eef2e4\"\n                }\n            ]\n        }\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "change-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"oldPassword\":\"12345@aA\",\r\n    \"newPassword\":\"123456@aA\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/change-password",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "change-password"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "change-password",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"oldPassword\":\"12345@aA\",\r\n    \"newPassword\":\"123456@aA\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/change-password",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "change-password"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 07:05:40 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "93"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c14f6e1eb9ad058-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"68-5TjkoR+HX5VNt9yqW37R8AnHJZ8\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "9b3d963a-2de2-4e03"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"success\": true,\n    \"message\": \"Password Changed Successfully\",\n    \"data\": null\n}"
+            }
+          ]
+        },
+        {
+          "name": "get-new-access-token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh-token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "refresh-token"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "get-new-access-token",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/refresh-token",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "refresh-token"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 07:56:55 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "317"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c1541fced080645-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"188-vxD+7rOU/6bNHmg98wx443CTtkU\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "c0e83cb1-2fd9-4a74"
+                },
+                {
+                  "key": "Set-Cookie",
+                  "value": "accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmOTA4NzgyNi0wNDM2LTQ1MTktYjViYy0wMmY4MzZlZWYyZTQiLCJlbWFpbCI6ImFidWhvamFpZmExMjNAZ21haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3Njg5ODIyMTUsImV4cCI6MTc2OTU4NzAxNX0.POeO6jEjTccRNEygfvvAvxHU9pXYUitcJtQxAQNHPnA; Path=/; HttpOnly; Secure; SameSite=None"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"success\": true,\n    \"message\": \"New Access Token Retrived Successfully\",\n    \"data\": {\n        \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJmOTA4NzgyNi0wNDM2LTQ1MTktYjViYy0wMmY4MzZlZWYyZTQiLCJlbWFpbCI6ImFidWhvamFpZmExMjNAZ21haWwuY29tIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3Njg5ODIyMTUsImV4cCI6MTc2OTU4NzAxNX0.POeO6jEjTccRNEygfvvAvxHU9pXYUitcJtQxAQNHPnA\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "logout",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": [
+            {
+              "name": "logout",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/auth/logout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "logout"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 09:31:14 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "93"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c15cc28893aba5f-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"67-kqc9W7E/CYiAIA8odqW/C1Gw/O0\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "4b9628e6-1d2f-4112"
+                },
+                {
+                  "key": "Set-Cookie",
+                  "value": "accessToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None"
+                },
+                {
+                  "key": "Set-Cookie",
+                  "value": "refreshToken=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly; Secure; SameSite=None"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"success\": true,\n    \"message\": \"User Logged Out Successfully\",\n    \"data\": null\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "register-user",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"abuhojaifa123@gmail.com\",\r\n    \"password\":\"123456@aA\",\r\n    \"name\":\"Hujaifa\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/user",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "register-user",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\":\"abuhojaifa123@gmail.com\",\r\n    \"password\":\"123456@aA\",\r\n    \"name\":\"Hujaifa\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/user",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "user"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 07:56:40 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "276"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c154198fb180645-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"1dd-6PS5PUY4KIvS0mCQh4v9mEBq3Ng\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "1159b95d-1240-42ec"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 201,\n    \"success\": true,\n    \"message\": \"User created successfully.\",\n    \"data\": {\n        \"id\": \"f9087826-0436-4519-b5bc-02f836eef2e4\",\n        \"email\": \"abuhojaifa123@gmail.com\",\n        \"name\": \"Hujaifa\",\n        \"role\": \"USER\",\n        \"isDeleted\": false,\n        \"createdAt\": \"2026-01-21T07:56:40.090Z\",\n        \"updatedAt\": \"2026-01-21T07:56:40.090Z\",\n        \"authProviders\": [\n            {\n                \"provider\": \"CREDENTIALS\",\n                \"providerId\": \"abuhojaifa123@gmail.com\"\n            }\n        ]\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "me",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/user/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "me"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "me",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/user/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "user",
+                    "me"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 09:29:39 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "274"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c15c59b0fc35942-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"1dc-EYbWbTlgPrmzUOgVnfaw0PiGvcU\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "03ac5323-bbcf-40a8"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"success\": true,\n    \"message\": \"User fetched successfully\",\n    \"data\": {\n        \"id\": \"f9087826-0436-4519-b5bc-02f836eef2e4\",\n        \"email\": \"abuhojaifa123@gmail.com\",\n        \"name\": \"Hujaifa\",\n        \"role\": \"USER\",\n        \"isDeleted\": false,\n        \"createdAt\": \"2026-01-21T07:56:40.090Z\",\n        \"updatedAt\": \"2026-01-21T07:56:40.090Z\",\n        \"authProviders\": [\n            {\n                \"provider\": \"CREDENTIALS\",\n                \"providerId\": \"abuhojaifa123@gmail.com\"\n            }\n        ]\n    }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "product",
+      "item": [
+        {
+          "name": "create-product",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"English book\",\r\n    \"description\":\"This is a nice english book\",\r\n    \"price\":150,\r\n    \"quantity\":70\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/product",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "create-product",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\":\"English book\",\r\n    \"description\":\"This is a nice english book\",\r\n    \"price\":150,\r\n    \"quantity\":70\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/product",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "product"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 08:00:04 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "220"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c154696cb09d058-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"16e-yTv6ki1VWPMZth9FVbO3wzCNTBc\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "bfbc461c-19f5-4e54"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 201,\n    \"success\": true,\n    \"message\": \"Product created successfully\",\n    \"data\": {\n        \"id\": \"2139a07b-1f6f-4115-8736-c50bffc979a8\",\n        \"name\": \"English book\",\n        \"description\": \"This is a nice english book\",\n        \"priceCents\": 15000,\n        \"quantity\": 70,\n        \"createdAt\": \"2026-01-21T08:00:04.535Z\",\n        \"updatedAt\": \"2026-01-21T08:00:04.535Z\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "get-all-products",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/product",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "get-all-products",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/product",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "product"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 08:35:14 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "501"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c157a1b4e91d058-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"4c9-f7Y6Dbk72FlukX7z4gBTL5DVRiw\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "e57de5a5-15d0-491d"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"success\": true,\n    \"message\": \"Products retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": \"25d88cd0-8e49-4ad2-91ba-765e2f335029\",\n            \"name\": \"Math book\",\n            \"description\": \"This is a nice math book\",\n            \"priceCents\": 18000,\n            \"quantity\": 80,\n            \"createdAt\": \"2026-01-21T07:57:02.798Z\",\n            \"updatedAt\": \"2026-01-21T07:57:29.899Z\",\n            \"orderItems\": [\n                {\n                    \"id\": \"57f8e8c8-f7fc-4be8-8a55-a01d1fead313\",\n                    \"orderId\": \"81a05277-0fad-46be-b40d-6b886d7c989f\",\n                    \"quantity\": 10\n                }\n            ]\n        },\n        {\n            \"id\": \"2139a07b-1f6f-4115-8736-c50bffc979a8\",\n            \"name\": \"English book\",\n            \"description\": \"This is a nice english book\",\n            \"priceCents\": 15000,\n            \"quantity\": 60,\n            \"createdAt\": \"2026-01-21T08:00:04.535Z\",\n            \"updatedAt\": \"2026-01-21T08:01:15.782Z\",\n            \"orderItems\": [\n                {\n                    \"id\": \"79fc3432-d3e0-4446-96b8-d3ec2c334184\",\n                    \"orderId\": \"62140ab1-ad62-49b1-a7fd-a40204b71a9e\",\n                    \"quantity\": 5\n                },\n                {\n                    \"id\": \"415caa2f-d1bc-4f9e-aaff-df2bb841ebc6\",\n                    \"orderId\": \"b0a6fbd3-8807-4fcd-b5ce-36ed9acc4ce4\",\n                    \"quantity\": 5\n                }\n            ]\n        }\n    ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "get-single-product",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/product/:id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "25d88cd0-8e49-4ad2-91ba-765e2f335029"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "get-single-product",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/product/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "product",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": "25d88cd0-8e49-4ad2-91ba-765e2f335029"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 09:07:07 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "321"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c15a8d17b7d0645-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"21d-M7gdGViI5HkP2hYPhmme51GbNA8\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "9f7a5914-e1c3-4790"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"success\": true,\n    \"message\": \"Product retrieved successfully\",\n    \"data\": {\n        \"id\": \"25d88cd0-8e49-4ad2-91ba-765e2f335029\",\n        \"name\": \"Math book\",\n        \"description\": \"This is a nice math book\",\n        \"priceCents\": 18000,\n        \"quantity\": 80,\n        \"createdAt\": \"2026-01-21T07:57:02.798Z\",\n        \"updatedAt\": \"2026-01-21T07:57:29.899Z\",\n        \"orderItems\": [\n            {\n                \"id\": \"57f8e8c8-f7fc-4be8-8a55-a01d1fead313\",\n                \"orderId\": \"81a05277-0fad-46be-b40d-6b886d7c989f\",\n                \"quantity\": 10\n            }\n        ]\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "update-product",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\":\"New Math Book\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/product/25d88cd0-8e49-4ad2-91ba-765e2f335029",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "product",
+                "25d88cd0-8e49-4ad2-91ba-765e2f335029"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "update-product",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\":\"New Math Book\" \r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/product/25d88cd0-8e49-4ad2-91ba-765e2f335029",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "product",
+                    "25d88cd0-8e49-4ad2-91ba-765e2f335029"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 09:07:24 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "240"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c15a93cd8850645-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"16c-5y3L2y8gqmjk0Scp0FpZjPlBdwM\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "2ffae4a9-4a91-483f"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"success\": true,\n    \"message\": \"Product updated successfully\",\n    \"data\": {\n        \"id\": \"25d88cd0-8e49-4ad2-91ba-765e2f335029\",\n        \"name\": \"New Math Book\",\n        \"description\": \"This is a nice math book\",\n        \"priceCents\": 18000,\n        \"quantity\": 80,\n        \"createdAt\": \"2026-01-21T07:57:02.798Z\",\n        \"updatedAt\": \"2026-01-21T09:07:24.670Z\"\n    }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "order",
+      "item": [
+        {
+          "name": "create-order-with-pay-now",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"items\":[{\r\n        \"productId\":\"25d88cd0-8e49-4ad2-91ba-765e2f335029\",\r\n        \"quantity\":10\r\n    }]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/order",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "create-order-with-pay-now",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"items\":[{\r\n        \"productId\":\"25d88cd0-8e49-4ad2-91ba-765e2f335029\",\r\n        \"quantity\":10\r\n    }]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/order",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "order"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 07:57:34 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "528"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c1542d47b9e0645-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"29e-n/R682dAcEerGKzyMkJVRzt56z8\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "4bcbd02e-7f32-47c4"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 201,\n    \"success\": true,\n    \"message\": \"Order created successfully\",\n    \"data\": {\n        \"paymentUrl\": \"https://checkout.stripe.com/c/pay/cs_test_a1hVCZ8SClDmy7oTQ1QowYCZdSewIRQxzbOuys7lEs7MJURxAcebSiNuce#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdkdWxOYHwnPyd1blpxYHZxWjA0V1FqMkNXdFF1UFZTNXdmTFFLY0xUPHRyTDB0SVx3cjFgd3ZrVUZEYmFxYWY8akw2X0syMTNXcEhVcX9%2FbFNPUFU8fVRjTEFqQEtma0B2N0pdRHVOaVJCNTUxSmE3Y0RLZycpJ2N3amhWYHdzYHcnP3F3cGApJ2dkZm5id2pwa2FGamlqdyc%2FJyZjY2NjY2MnKSdpZHxqcHFRfHVgJz8ndmxrYmlgWmxxYGgnKSdga2RnaWBVaWRmYG1qaWFgd3YnP3F3cGB4JSUl\",\n        \"orderId\": \"81a05277-0fad-46be-b40d-6b886d7c989f\",\n        \"paymentId\": \"1ea17b13-2fbc-43fa-8e31-ce602b2ba6e3\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "create-order-with-pay-later",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"items\":[{\r\n        \"productId\":\"2139a07b-1f6f-4115-8736-c50bffc979a8\",\r\n        \"quantity\":5\r\n    }]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/order/pay-later",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order",
+                "pay-later"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "create-order-with-pay-later",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"items\":[{\r\n        \"productId\":\"2139a07b-1f6f-4115-8736-c50bffc979a8\",\r\n        \"quantity\":5\r\n    }]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/order/pay-later",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "order",
+                    "pay-later"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 08:01:15 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "173"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c1548585ea7d058-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"ea-XxU0QQnD4f+WQJ/HyjQ+L9YegcA\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "fa357b80-e947-4f7d"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 201,\n    \"success\": true,\n    \"message\": \"Order created (pay later)\",\n    \"data\": {\n        \"orderId\": \"b0a6fbd3-8807-4fcd-b5ce-36ed9acc4ce4\",\n        \"paymentId\": \"514c1a16-103c-46a0-9c49-d14129230809\",\n        \"payLater\": true\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "initiate-payment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/order/b0a6fbd3-8807-4fcd-b5ce-36ed9acc4ce4/pay",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order",
+                "b0a6fbd3-8807-4fcd-b5ce-36ed9acc4ce4",
+                "pay"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "initiate-payment",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/order/b0a6fbd3-8807-4fcd-b5ce-36ed9acc4ce4/pay",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "order",
+                    "b0a6fbd3-8807-4fcd-b5ce-36ed9acc4ce4",
+                    "pay"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 08:01:42 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "486"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c1548eac938d058-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"29f-b+StW1IslnbOWZsi8RKTNDuBZL8\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "f384c17c-ef8f-4a7c"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"success\": true,\n    \"message\": \"Payment initiation queued\",\n    \"data\": {\n        \"paymentUrl\": \"https://checkout.stripe.com/c/pay/cs_test_a1YYeWjoKxdXfNDIZ3zcKoCKznpaDqJ6jjZi5NfBcjsFj4o2yUL9ZwvRMR#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdkdWxOYHwnPyd1blpxYHZxWjA0V1FqMkNXdFF1UFZTNXdmTFFLY0xUPHRyTDB0SVx3cjFgd3ZrVUZEYmFxYWY8akw2X0syMTNXcEhVcX9%2FbFNPUFU8fVRjTEFqQEtma0B2N0pdRHVOaVJCNTUxSmE3Y0RLZycpJ2N3amhWYHdzYHcnP3F3cGApJ2dkZm5id2pwa2FGamlqdyc%2FJyZjY2NjY2MnKSdpZHxqcHFRfHVgJz8ndmxrYmlgWmxxYGgnKSdga2RnaWBVaWRmYG1qaWFgd3YnP3F3cGB4JSUl\",\n        \"sessionId\": \"cs_test_a1YYeWjoKxdXfNDIZ3zcKoCKznpaDqJ6jjZi5NfBcjsFj4o2yUL9ZwvRMR\",\n        \"paymentIntent\": null\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "get-all-orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/order",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "order"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "get-all-orders",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/order",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "order"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 08:02:20 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "545"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c1549e6884fd058-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"72d-HsLRuTeaGb9MZEgYFczHYxd53aM\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "390b88ea-9ea3-496e"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"success\": true,\n    \"message\": \"Orders retrieved successfully\",\n    \"data\": [\n        {\n            \"id\": \"b0a6fbd3-8807-4fcd-b5ce-36ed9acc4ce4\",\n            \"userId\": \"f9087826-0436-4519-b5bc-02f836eef2e4\",\n            \"status\": \"PAID\",\n            \"stockRestored\": false,\n            \"amountCents\": 75000,\n            \"createdAt\": \"2026-01-21T08:01:15.786Z\",\n            \"updatedAt\": \"2026-01-21T08:02:08.289Z\",\n            \"items\": [\n                {\n                    \"id\": \"415caa2f-d1bc-4f9e-aaff-df2bb841ebc6\",\n                    \"orderId\": \"b0a6fbd3-8807-4fcd-b5ce-36ed9acc4ce4\",\n                    \"productId\": \"2139a07b-1f6f-4115-8736-c50bffc979a8\",\n                    \"quantity\": 5,\n                    \"priceCents\": 15000\n                }\n            ]\n        },\n        {\n            \"id\": \"62140ab1-ad62-49b1-a7fd-a40204b71a9e\",\n            \"userId\": \"f9087826-0436-4519-b5bc-02f836eef2e4\",\n            \"status\": \"PAID\",\n            \"stockRestored\": false,\n            \"amountCents\": 75000,\n            \"createdAt\": \"2026-01-21T08:00:23.187Z\",\n            \"updatedAt\": \"2026-01-21T08:00:58.791Z\",\n            \"items\": [\n                {\n                    \"id\": \"79fc3432-d3e0-4446-96b8-d3ec2c334184\",\n                    \"orderId\": \"62140ab1-ad62-49b1-a7fd-a40204b71a9e\",\n                    \"productId\": \"2139a07b-1f6f-4115-8736-c50bffc979a8\",\n                    \"quantity\": 5,\n                    \"priceCents\": 15000\n                }\n            ]\n        },\n        {\n            \"id\": \"81a05277-0fad-46be-b40d-6b886d7c989f\",\n            \"userId\": \"f9087826-0436-4519-b5bc-02f836eef2e4\",\n            \"status\": \"PAID\",\n            \"stockRestored\": false,\n            \"amountCents\": 180000,\n            \"createdAt\": \"2026-01-21T07:57:29.991Z\",\n            \"updatedAt\": \"2026-01-21T07:58:27.886Z\",\n            \"items\": [\n                {\n                    \"id\": \"57f8e8c8-f7fc-4be8-8a55-a01d1fead313\",\n                    \"orderId\": \"81a05277-0fad-46be-b40d-6b886d7c989f\",\n                    \"productId\": \"25d88cd0-8e49-4ad2-91ba-765e2f335029\",\n                    \"quantity\": 10,\n                    \"priceCents\": 18000\n                }\n            ]\n        }\n    ]\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "payment",
+      "item": [
+        {
+          "name": "payment-status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/payment/:paymentId/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "payment",
+                ":paymentId",
+                "status"
+              ],
+              "variable": [
+                {
+                  "key": "paymentId",
+                  "value": "1ea17b13-2fbc-43fa-8e31-ce602b2ba6e3"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "payment-status",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/payment/:paymentId/status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "payment",
+                    ":paymentId",
+                    "status"
+                  ],
+                  "variable": [
+                    {
+                      "key": "paymentId",
+                      "value": "1ea17b13-2fbc-43fa-8e31-ce602b2ba6e3"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": null,
+              "header": [
+                {
+                  "key": "Date",
+                  "value": "Wed, 21 Jan 2026 08:34:40 GMT"
+                },
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "504"
+                },
+                {
+                  "key": "Connection",
+                  "value": "keep-alive"
+                },
+                {
+                  "key": "CF-RAY",
+                  "value": "9c157948fc84d058-DAC"
+                },
+                {
+                  "key": "access-control-allow-credentials",
+                  "value": "true"
+                },
+                {
+                  "key": "Content-Encoding",
+                  "value": "br"
+                },
+                {
+                  "key": "etag",
+                  "value": "W/\"2c8-b9xGwhuVkLSymYIAnEd+9gjRK/0\""
+                },
+                {
+                  "key": "rndr-id",
+                  "value": "40d09786-1d92-4298"
+                },
+                {
+                  "key": "vary",
+                  "value": "Origin"
+                },
+                {
+                  "key": "vary",
+                  "value": "Accept-Encoding"
+                },
+                {
+                  "key": "x-powered-by",
+                  "value": "Express"
+                },
+                {
+                  "key": "x-render-origin-server",
+                  "value": "Render"
+                },
+                {
+                  "key": "cf-cache-status",
+                  "value": "DYNAMIC"
+                },
+                {
+                  "key": "Server",
+                  "value": "cloudflare"
+                },
+                {
+                  "key": "alt-svc",
+                  "value": "h3=\":443\"; ma=86400"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"statusCode\": 200,\n    \"success\": true,\n    \"message\": \"Payment status\",\n    \"data\": {\n        \"paymentId\": \"1ea17b13-2fbc-43fa-8e31-ce602b2ba6e3\",\n        \"status\": \"PAID\",\n        \"sessionId\": \"cs_test_a1hVCZ8SClDmy7oTQ1QowYCZdSewIRQxzbOuys7lEs7MJURxAcebSiNuce\",\n        \"paymentUrl\": \"https://checkout.stripe.com/c/pay/cs_test_a1hVCZ8SClDmy7oTQ1QowYCZdSewIRQxzbOuys7lEs7MJURxAcebSiNuce#fidnandhYHdWcXxpYCc%2FJ2FgY2RwaXEnKSdkdWxOYHwnPyd1blpxYHZxWjA0V1FqMkNXdFF1UFZTNXdmTFFLY0xUPHRyTDB0SVx3cjFgd3ZrVUZEYmFxYWY8akw2X0syMTNXcEhVcX9%2FbFNPUFU8fVRjTEFqQEtma0B2N0pdRHVOaVJCNTUxSmE3Y0RLZycpJ2N3amhWYHdzYHcnP3F3cGApJ2dkZm5id2pwa2FGamlqdyc%2FJyZjY2NjY2MnKSdpZHxqcHFRfHVgJz8ndmxrYmlgWmxxYGgnKSdga2RnaWBVaWRmYG1qaWFgd3YnP3F3cGB4JSUl\"\n    }\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
