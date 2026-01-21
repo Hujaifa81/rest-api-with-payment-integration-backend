@@ -11,10 +11,17 @@ export const checkAuth =
   (...authRoles: string[]) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const accessToken = req.headers.authorization || req.cookies?.accessToken;
+      // Accept token from `Authorization` header (Bearer <token>) or cookie.
+      const authHeader = (req.headers.authorization as string) || undefined;
+      let accessToken = authHeader ?? req.cookies?.accessToken ?? req.cookies?.access_token;
 
       if (!accessToken) {
-        throw new ApiError(httpStatus.UNAUTHORIZED, "No Token Recieved");
+        throw new ApiError(httpStatus.UNAUTHORIZED, "No Token Received");
+      }
+
+      // Strip leading "Bearer " if present (case-insensitive)
+      if (typeof accessToken === "string" && accessToken.toLowerCase().startsWith("bearer ")) {
+        accessToken = accessToken.slice(7).trim();
       }
 
       const verifiedToken = verifyToken(accessToken, ENV.JWT.JWT_ACCESS_SECRET) as IJWTPayload;
@@ -29,12 +36,6 @@ export const checkAuth =
         throw new ApiError(httpStatus.UNAUTHORIZED, "User does not exist");
       }
 
-      // if (!isUserExist.isVerified) {
-      //   throw new ApiError(
-      //     httpStatus.UNAUTHORIZED,
-      //     "User has not verified email.so first verify email"
-      //   );
-      // }
 
       if (isUserExist.isDeleted) {
         throw new ApiError(httpStatus.UNAUTHORIZED, "User is deleted");
